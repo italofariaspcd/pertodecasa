@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perto de Casa SE 🌵</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <style>
+        /* --- IDENTIDADE VISUAL NORDESTINA --- */
+        :root {
+            --cor-terracota: #B7410E;
+            --cor-areia: #FAF3E0;
+            --cor-mandacaru: #2E7D32;
+            --cor-sol: #FF6F00;
+        }
+
+        body {
+            background-color: var(--cor-areia);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background-color: var(--cor-terracota);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-buscar {
+            background-color: var(--cor-terracota);
+            color: white;
+            border: none;
+        }
+        .btn-buscar:hover {
+            background-color: #9c350b;
+            color: white;
+        }
+
+        .card-profissional {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            background-color: white;
+        }
+        
+        .card-profissional:hover {
+            transform: translateY(-5px);
+        }
+
+        .tag-categoria {
+            background-color: var(--cor-sol);
+            color: white;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .btn-whats {
+            background-color: var(--cor-mandacaru);
+            color: white;
+            border-radius: 50px;
+            padding: 8px 20px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-whats:hover {
+            background-color: #1b5e20;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-dark mb-4">
+        <div class="container d-flex justify-content-center">
+            <span class="navbar-brand mb-0 h1 d-flex align-items-center gap-2">
+                <span class="material-icons text-warning">wb_sunny</span>
+                Perto de Casa SE
+            </span>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <div class="card p-4 mb-5 border-0 shadow-sm" style="border-radius: 15px;">
+            <form action="/" method="get">
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <label class="form-label text-muted small fw-bold">O QUE VOCÊ PRECISA?</label>
+                        <select name="category_slug" class="form-select form-select-lg" required>
+                            <option value="" disabled selected>Selecione...</option>
+                            {% for cat in categorias %}
+                                <option value="{{ cat.slug }}" {% if cat.slug == categoria_selecionada %}selected{% endif %}>
+                                    {{ cat.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label text-muted small fw-bold">QUAL BAIRRO?</label>
+                        <input type="text" name="bairro" class="form-control form-control-lg" placeholder="Ex: Atalaia" value="{{ bairro_atual }}">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-buscar btn-lg w-100">Buscar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        {% if buscar_realizada %}
+            <h5 class="text-secondary mb-3 fw-bold">Profissionais Encontrados:</h5>
+            
+            {% if profissionais %}
+                <div class="row g-4">
+                    {% for p in profissionais %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card card-profissional h-100 p-3">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <span class="material-icons" style="font-size: 3rem; color: var(--cor-terracota);">account_circle</span>
+                                <div>
+                                    <h5 class="mb-0 fw-bold text-dark">{{ p.full_name }}</h5>
+                                    <small class="text-muted">📍 {{ p.address_neighborhood }}</small>
+                                </div>
+                            </div>
+                            <p class="text-secondary flex-grow-1">{{ p.bio }}</p>
+                            <hr class="text-muted opacity-25">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="tag-categoria">
+                                    {% for c in p.categories %}
+                                        {{ c.name }}
+                                    {% endfor %}
+                                </span>
+                                <a href="https://wa.me/55{{ p.whatsapp }}" target="_blank" class="btn-whats">
+                                    <span class="material-icons" style="font-size: 18px;">message</span> WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <h3 class="text-muted">Oxente! 🌵</h3>
+                    <p class="text-muted">Não achamos ninguém com esse perfil por aqui.</p>
+                </div>
+            {% endif %}
+        {% endif %}
+
+    </div>
+
+    <footer class="text-center mt-5 py-4 text-muted small">
+        <p>Feito com ❤️ em Sergipe | Perto de Casa App</p>
+    </footer>
+
+</body>
+</html>

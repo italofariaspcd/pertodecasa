@@ -1,177 +1,160 @@
-import flet as ft
-import requests
-import time
+from fastapi import FastAPI, Depends, HTTPException, status, Request, Form
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
+from typing import List, Optional
 
-# URL da sua API
-API_URL = "http://127.0.0.1:8000"
+# Importações do seu projeto
+from database import engine, get_db, Base
+from models import User, Category, Provider
+from auth import get_password_hash
+from pydantic import BaseModel
 
-def main(page: ft.Page):
-    # --- 1. CONFIGURAÇÃO VISUAL (A Janela abre aqui) ---
-    page.title = "Perto de Casa SE"
-    page.theme_mode = ft.ThemeMode.LIGHT
-    page.window_width = 390
-    page.window_height = 844
-    page.bgcolor = "#F2F2F2"
-    page.scroll = "AUTO"
-    page.padding = 0
+Base.metadata.create_all(bind=engine)
 
-    # --- 2. COMPONENTES VISUAIS (Criados vazios primeiro) ---
-    
-    # Cabeçalho
-    header = ft.Container(
-        bgcolor="blue",
-        padding=20,
-        content=ft.Row([
-            ft.Icon("location_on", color="white"),
-            ft.Text("Perto de Casa SE", color="white", size=20, weight="bold")
-        ])
-    )
+app = FastAPI()
+templates = Jinja2Templates(directory="templates")
 
-    # Dropdown começa com aviso de "Carregando..."
-    dd_categoria = ft.Dropdown(
-        label="O que você precisa?",
-        hint_text="Carregando categorias...",
-        options=[],
-        bgcolor="white",
-        border_radius=10,
-        filled=True,
-        disabled=True # Travado até carregar
-    )
+# --- ROTAS WEB (FRONTEND) ---
 
-    txt_bairro = ft.TextField(
-        label="Qual bairro?",
-        hint_text="Ex: Atalaia",
-        prefix_icon="search",
-        bgcolor="white",
-        border_radius=10,
-        filled=True
-    )
+# 1. Página Inicial (Busca)
+@app.get("/", response_class=HTMLResponse)
+def read_root(request: Request, category_slug: Optional[str] = None, bairro: Optional[str] = None, db: Session = Depends(get_db)):
+    categorias = db.query(Category).all()
+    profissionais = []
+    buscar_realizada = False
 
-    btn_buscar = ft.ElevatedButton(
-        "Encontrar Profissionais",
-        bgcolor="blue",
-        color="white",
-        height=50,
-        on_click=None # Definimos a função depois
-    )
-
-    # Onde os cards vão aparecer
-    lista_resultados = ft.Column(spacing=10)
-
-    # --- 3. MONTAGEM DA TELA (Desenha tudo AGORA) ---
-    page.add(
-        header,
-        ft.Container(
-            padding=20,
-            content=ft.Column([
-                dd_categoria,
-                txt_bairro,
-                ft.Container(btn_buscar, alignment=ft.Alignment(0, 0)),
-                ft.Divider(),
-                ft.Text("Resultados:", weight="bold", size=16),
-                lista_resultados
-            ], spacing=15)
-        )
-    )
-    page.update() # <--- FORÇA O DESENHO NA TELA
-
-    # --- 4. LÓGICA (Roda depois que a tela já apareceu) ---
-
-    def criar_card(p):
-        cats_texto = ", ".join(p.get('categories', []))
-        return ft.Card(
-            elevation=2,
-            content=ft.Container(
-                padding=15,
-                bgcolor="white",
-                border_radius=10,
-                content=ft.Column([
-                    ft.Row([
-                        ft.Icon("account_circle", size=40, color="blue"),
-                        ft.Column([
-                            ft.Text(p['full_name'], weight="bold", size=16),
-                            ft.Text(f"📍 {p['neighborhood']}", size=12, color="grey"),
-                        ], spacing=2),
-                    ]),
-                    ft.Text(p['bio'], size=14, max_lines=2, overflow=ft.TextOverflow.ELLIPSIS),
-                    ft.Divider(),
-                    ft.Row([
-                        ft.Container(
-                            content=ft.Text(cats_texto, size=12, color="white"),
-                            bgcolor="blue", padding=5, border_radius=5
-                        ),
-                        ft.ElevatedButton(
-                            "WhatsApp",
-                            icon="message",
-                            color="white",
-                            bgcolor="green",
-                            url=f"https://wa.me/55{p['whatsapp']}",
-                            height=30
-                        )
-                    ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
-                ])
-            )
-        )
-
-    def buscar_profissionais(e):
-        if not dd_categoria.value:
-            return
-
-        btn_buscar.text = "Buscando..."
-        btn_buscar.disabled = True
-        lista_resultados.controls.clear()
-        lista_resultados.controls.append(ft.ProgressBar(width=200, color="blue"))
-        page.update()
-
-        try:
-            params = {"bairro": txt_bairro.value} if txt_bairro.value else {}
-            res = requests.get(f"{API_URL}/search/{dd_categoria.value}", params=params, timeout=5)
-            
-            lista_resultados.controls.clear()
-            
-            if res.status_code == 200:
-                profissionais = res.json()
-                if not profissionais:
-                    lista_resultados.controls.append(
-                        ft.Container(
-                            content=ft.Text("Ninguém encontrado 😔", color="grey"),
-                            padding=20,
-                            alignment=ft.Alignment(0, 0)
-                        )
-                    )
-                else:
-                    for p in profissionais:
-                        lista_resultados.controls.append(criar_card(p))
-            else:
-                lista_resultados.controls.append(ft.Text("Erro no servidor"))
-                
-        except Exception:
-            lista_resultados.controls.clear()
-            lista_resultados.controls.append(ft.Text("Erro de conexão"))
+    if category_slug:
+        buscar_realizada = True
+        query = db.query(Provider).join(Provider.categories).filter(Category.slug == category_slug)
+        if bairro:
+            query = query.filter(Provider.address_neighborhood.ilike(f"%{bairro}%"))
         
-        btn_buscar.text = "Encontrar Profissionais"
-        btn_buscar.disabled = False
-        page.update()
+        providers = query.all()
+        for p in providers:
+            user = db.query(User).filter(User.id == p.id).first()
+            profissionais.append({
+                "full_name": user.full_name,
+                "whatsapp": p.whatsapp,
+                "bio": p.bio,
+                "address_neighborhood": p.address_neighborhood,
+                "categories": p.categories
+            })
 
-    # --- 5. CARREGAMENTO DE DADOS (Background) ---
-    # Agora que a tela já existe, vamos buscar os dados
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "categorias": categorias,
+        "profissionais": profissionais,
+        "buscar_realizada": buscar_realizada,
+        "categoria_selecionada": category_slug,
+        "bairro_atual": bairro if bairro else ""
+    })
+
+# 2. Página de Cadastro (Exibir Formulário)
+@app.get("/cadastro", response_class=HTMLResponse)
+def view_cadastro(request: Request, db: Session = Depends(get_db)):
+    # Buscamos as categorias para mostrar os checkboxes
+    categorias = db.query(Category).all()
+    return templates.TemplateResponse("cadastro.html", {
+        "request": request,
+        "categorias": categorias
+    })
+
+# 3. Processar Cadastro (Receber Dados do Formulário)
+@app.post("/cadastro", response_class=HTMLResponse)
+def submit_cadastro(
+    request: Request,
+    full_name: str = Form(...),
+    email: str = Form(...),
+    password: str = Form(...),
+    whatsapp: str = Form(...),
+    bio: str = Form(...),
+    address_neighborhood: str = Form(...),
+    category_ids: List[int] = Form([]), # Recebe lista de IDs marcados
+    db: Session = Depends(get_db)
+):
+    categorias = db.query(Category).all()
+    
+    # Verifica se email já existe
+    existing_user = db.query(User).filter(User.email == email).first()
+    if existing_user:
+        return templates.TemplateResponse("cadastro.html", {
+            "request": request,
+            "categorias": categorias,
+            "msg_erro": "Esse e-mail já está cadastrado!"
+        })
+
     try:
-        print("Buscando categorias...")
-        res = requests.get(f"{API_URL}/categories", timeout=3)
-        if res.status_code == 200:
-            dd_categoria.options = [ft.dropdown.Option(key=c['slug'], text=c['name']) for c in res.json()]
-            dd_categoria.disabled = False # Destrava
-            dd_categoria.hint_text = "Selecione..."
-            print("Sucesso!")
-        else:
-            dd_categoria.hint_text = "Erro ao carregar"
-    except:
-        print("Erro de conexão")
-        dd_categoria.hint_text = "Sem conexão"
+        # 1. Cria Usuário
+        hashed_pwd = get_password_hash(password)
+        new_user = User(
+            email=email,
+            hashed_password=hashed_pwd,
+            full_name=full_name,
+            is_provider=True # Quem se cadastra por aqui é profissional
+        )
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
 
-    # Conecta a função ao botão
-    btn_buscar.on_click = buscar_profissionais
-    page.update() # Atualiza a tela com os dados novos
+        # 2. Cria Perfil Profissional
+        new_provider = Provider(
+            id=new_user.id,
+            whatsapp=whatsapp,
+            bio=bio,
+            address_neighborhood=address_neighborhood
+        )
+        
+        # 3. Vincula Categorias
+        if category_ids:
+            cats_db = db.query(Category).filter(Category.id.in_(category_ids)).all()
+            new_provider.categories = cats_db
+        
+        db.add(new_provider)
+        db.commit()
 
-if __name__ == "__main__":
-    ft.app(target=main)
+        return templates.TemplateResponse("cadastro.html", {
+            "request": request,
+            "categorias": categorias,
+            "msg_sucesso": "Cadastro realizado com sucesso! Bem-vindo(a) ao time."
+        })
+
+    except Exception as e:
+        return templates.TemplateResponse("cadastro.html", {
+            "request": request,
+            "categorias": categorias,
+            "msg_erro": f"Erro interno: {str(e)}"
+        })
+
+# --- ROTAS API (JSON) - Mantidas para uso futuro ---
+class UserCreate(BaseModel):
+    full_name: str
+    email: str
+    password: str
+    is_provider: bool = False
+    whatsapp: Optional[str] = None
+    bio: Optional[str] = None
+    category_ids: List[int] = []
+    address_neighborhood: Optional[str] = None
+
+@app.get("/categories")
+def get_categories(db: Session = Depends(get_db)):
+    return db.query(Category).all()
+
+@app.get("/search/{category_slug}")
+def search_providers(category_slug: str, bairro: Optional[str] = None, db: Session = Depends(get_db)):
+    query = db.query(Provider).join(Provider.categories).filter(Category.slug == category_slug)
+    if bairro:
+        query = query.filter(Provider.address_neighborhood.ilike(f"%{bairro}%"))
+    providers = query.all()
+    results = []
+    for p in providers:
+        user = db.query(User).filter(User.id == p.id).first()
+        results.append({
+            "full_name": user.full_name,
+            "whatsapp": p.whatsapp,
+            "bio": p.bio,
+            "neighborhood": p.address_neighborhood,
+            "categories": [c.name for c in p.categories]
+        })
+    return results
