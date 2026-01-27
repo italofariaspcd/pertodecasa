@@ -1,0 +1,11 @@
+# Ambiente Virtual
+.venv/
+venv/
+__pycache__/
+
+# Banco de Dados (Não sobe pro Git, cada um cria o seu localmente)
+*.db
+*.sqlite3
+
+# Arquivos do sistema
+.DS_Store
