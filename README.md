@@ -71,3 +71,120 @@ Parcerias: Fale com síndicos de condomínios. Eles amam ter uma lista de presta
 Essa estrutura faz sentido para você?
 
 Se quiser, posso detalhar quais dados precisamos coletar no cadastro (Tabelas do Banco de Dados) para estruturar o sistema.
+
+Como você tem familiaridade com engenharia de dados e Python, estruturei o banco de dados pensando em um modelo relacional (SQL) sólido, pronto para ser implementado com um ORM como SQLAlchemy ou Django.
+
+O foco aqui é a escalabilidade e a inteligência de dados (para garantir que a busca por geolocalização e as métricas de conversão funcionem bem).
+
+Aqui está a modelagem sugerida para o Perto de Casa:
+
+1. Modelo Entidade-Relacionamento (Resumo Lógico)
+Usuarios: Tabela base para autenticação (Cliente e Profissional).
+
+Profissionais (Perfil): Extensão do usuário com dados de negócio (Bio, WhatsApp, CNPJ/CPF).
+
+Enderecos: Crucial para a lógica de "Perto de Casa" (Lat/Long + Bairro).
+
+Categorias: Taxonomia dos serviços (ex: Manutenção, Estética).
+
+Portfolio: Galeria de fotos (Antes/Depois).
+
+Analytics (Cliques): Tabela de fatos para registrar quem clicou no WhatsApp (essencial para mostrar valor ao profissional).
+
+2. Detalhamento das Tabelas
+Tabela: users (Usuários Base)
+Armazena o login e dados comuns.
+
+id (PK, UUID ou BigInt)
+
+full_name (Varchar): Nome de exibição.
+
+email (Varchar, Unique): Para login/recuperação.
+
+password_hash (Varchar): Senha criptografada.
+
+is_provider (Boolean): Flag para distinguir se é cliente ou prestador.
+
+created_at (Timestamp).
+
+Tabela: providers (Perfil do Profissional)
+Onde a mágica acontece. Vinculada 1:1 com users.
+
+id (PK)
+
+user_id (FK -> users.id)
+
+whatsapp_number (Varchar): Dado mais crítico do MVP. Apenas números, com DDD (79).
+
+bio (Text): "Sou eletricista há 10 anos, especialista em..."
+
+cpf_cnpj (Varchar): Para validação de segurança (Selo Verificado).
+
+is_verified (Boolean): Se a equipe validou os documentos.
+
+plan_type (Enum): 'FREE', 'PRO', 'DESTAQUE'.
+
+avg_rating (Float): Média de avaliações (cache para não calcular toda vez).
+
+Tabela: addresses (Geolocalização)
+Separado do usuário, pois um profissional pode atender em mais de uma base ou mudar de endereço sem afetar o perfil.
+
+id (PK)
+
+user_id (FK -> users.id)
+
+street (Varchar)
+
+number (Varchar)
+
+neighborhood (Varchar): O "Bairro". Essencial para filtros textuais (ex: "Siqueira Campos").
+
+city (Varchar): Ex: Aracaju, Lagarto, Itabaiana.
+
+state (Char 2): Default 'SE'.
+
+zip_code (Varchar): CEP.
+
+latitude (Decimal): Para cálculo de raio (PostGIS ou Haversine).
+
+longitude (Decimal).
+
+Tabela: categories (Taxonomia)
+id (PK)
+
+name (Varchar): Ex: "Eletricista", "Manicure".
+
+slug (Varchar): Para URLs amigáveis (ex: perto-de-casa/eletricista).
+
+icon_url (Varchar): Link do ícone do app.
+
+Tabela: provider_services (Relacionamento N:N)
+Um "Marido de Aluguel" pode estar em "Encanador" e "Eletricista" ao mesmo tempo.
+
+provider_id (FK -> providers.id)
+
+category_id (FK -> categories.id)
+
+Tabela: portfolio_images (Vitrine)
+id (PK)
+
+provider_id (FK -> providers.id)
+
+image_url (Varchar): Caminho no S3/Cloud Storage.
+
+caption (Varchar): Ex: "Instalação de ar split no Bairro 13 de Julho".
+
+type (Enum): 'NORMAL', 'BEFORE', 'AFTER'.
+
+Tabela: interaction_logs (Métricas de Negócio)
+Como não teremos chat no MVP, precisamos saber se o app está gerando valor. Contamos os cliques.
+
+id (PK)
+
+provider_id (FK -> providers.id): Quem recebeu o lead.
+
+client_id (FK -> users.id, Nullable): Quem clicou (se estiver logado).
+
+action_type (Enum): 'CLICK_WHATSAPP', 'VIEW_PROFILE', 'SHARE'.
+
+created_at (Timestamp).
