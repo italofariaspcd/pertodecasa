@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro - Perto de Casa SE</title>
+    <title>Cadastro - Perto de Casa Nordeste</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        :root { --cor-terracota: #B7410E; --cor-areia: #FAF3E0; --cor-mandacaru: #2E7D32; }
-        body { background-color: var(--cor-areia); }
+        :root { --cor-terracota: #B7410E; --cor-areia: #FAF3E0; --cor-mandacaru: #2E7D32; --cor-sol: #FF6F00; }
+        body { background-color: var(--cor-areia); font-family: 'Segoe UI', sans-serif; }
         .navbar { background-color: var(--cor-terracota); }
         .btn-salvar { background-color: var(--cor-mandacaru); color: white; border: none; font-weight: bold; }
         .btn-salvar:hover { background-color: #1b5e20; color: white; }
+        .form-control:focus { border-color: var(--cor-sol); box-shadow: 0 0 0 0.25rem rgba(255, 111, 0, 0.25); }
     </style>
 </head>
 <body>
@@ -41,10 +42,11 @@
                     {% endif %}
 
                     <form action="/cadastro" method="post">
-                        <h5 class="text-secondary border-bottom pb-2 mb-3">Dados Pessoais</h5>
+                        <h5 class="text-secondary border-bottom pb-2 mb-3">Seus Dados</h5>
+                        
                         <div class="mb-3">
                             <label class="form-label">Nome Completo</label>
-                            <input type="text" name="full_name" class="form-control" required>
+                            <input type="text" name="full_name" class="form-control" required placeholder="Maria da Silva">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">E-mail</label>
@@ -54,9 +56,19 @@
                             <label class="form-label">Senha</label>
                             <input type="password" name="password" class="form-control" required>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">WhatsApp (Só números, com DDD)</label>
-                            <input type="tel" name="whatsapp" class="form-control" placeholder="79999999999" required>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">WhatsApp (Com DDD)</label>
+                                <input type="tel" name="whatsapp" class="form-control" placeholder="79999998888" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Instagram (Opcional)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">@</span>
+                                    <input type="text" name="instagram" class="form-control" placeholder="seunegocio">
+                                </div>
+                            </div>
                         </div>
 
                         <h5 class="text-secondary border-bottom pb-2 mt-4 mb-3">Sobre o Serviço</h5>
@@ -65,11 +77,12 @@
                             <input type="text" name="address_neighborhood" class="form-control" placeholder="Ex: Jabotiana" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Resumo do que você faz</label>
-                            <textarea name="bio" class="form-control" rows="3"></textarea>
+                            <label class="form-label">O que você faz? (Resumo)</label>
+                            <textarea name="bio" class="form-control" rows="3" placeholder="Ex: Faço bolos para festas..."></textarea>
                         </div>
+                        
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Categorias (Marque todas que atendem):</label>
+                            <label class="form-label fw-bold">Categorias:</label>
                             <div class="card p-2 border bg-light" style="max-height: 200px; overflow-y: auto;">
                                 {% for cat in categorias %}
                                 <div class="form-check">
@@ -80,7 +93,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-salvar w-100 py-2">FINALIZAR CADASTRO</button>
+                        <button type="submit" class="btn btn-salvar w-100 py-2">CRIAR MEU PERFIL</button>
                     </form>
                 </div>
             </div>

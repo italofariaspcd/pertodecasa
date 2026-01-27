@@ -4,29 +4,24 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
-# Importações do seu projeto (Banco de Dados e Segurança)
+# Importações do projeto
 from database import engine, get_db, Base
 from models import User, Category, Provider
 from auth import get_password_hash
-from pydantic import BaseModel
 
-# Cria as tabelas no banco se não existirem
+# Cria as tabelas novas (lembre de ter deletado o .db antigo)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-
-# Configura a pasta onde estão os arquivos HTML
 templates = Jinja2Templates(directory="templates")
 
-# --- ROTA 1: PÁGINA INICIAL (BUSCA) ---
+# --- ROTA 1: BUSCA (HOME) ---
 @app.get("/", response_class=HTMLResponse)
 def read_root(request: Request, category_slug: Optional[str] = None, bairro: Optional[str] = None, db: Session = Depends(get_db)):
-    # Busca categorias para o dropdown
     categorias = db.query(Category).all()
     profissionais = []
     buscar_realizada = False
 
-    # Se tiver busca, filtra os profissionais
     if category_slug:
         buscar_realizada = True
         query = db.query(Provider).join(Provider.categories).filter(Category.slug == category_slug)
@@ -36,12 +31,12 @@ def read_root(request: Request, category_slug: Optional[str] = None, bairro: Opt
             
         providers = query.all()
         
-        # Monta os dados para exibir
         for p in providers:
             user = db.query(User).filter(User.id == p.id).first()
             profissionais.append({
                 "full_name": user.full_name,
                 "whatsapp": p.whatsapp,
+                "instagram": p.instagram, # <--- Enviando Instagram para o HTML
                 "bio": p.bio,
                 "address_neighborhood": p.address_neighborhood,
                 "categories": p.categories
@@ -56,7 +51,7 @@ def read_root(request: Request, category_slug: Optional[str] = None, bairro: Opt
         "bairro_atual": bairro if bairro else ""
     })
 
-# --- ROTA 2: PÁGINA DE CADASTRO (EXIBIR O FORMULÁRIO) ---
+# --- ROTA 2: VER FORMULÁRIO DE CADASTRO ---
 @app.get("/cadastro", response_class=HTMLResponse)
 def view_cadastro(request: Request, db: Session = Depends(get_db)):
     categorias = db.query(Category).all()
@@ -65,7 +60,7 @@ def view_cadastro(request: Request, db: Session = Depends(get_db)):
         "categorias": categorias
     })
 
-# --- ROTA 3: RECEBER OS DADOS DO CADASTRO (SALVAR NO BANCO) ---
+# --- ROTA 3: PROCESSAR CADASTRO ---
 @app.post("/cadastro", response_class=HTMLResponse)
 def submit_cadastro(
     request: Request,
@@ -73,23 +68,31 @@ def submit_cadastro(
     email: str = Form(...),
     password: str = Form(...),
     whatsapp: str = Form(...),
+    instagram: Optional[str] = Form(None), # <--- Recebe o Insta (pode ser vazio)
     bio: str = Form(...),
     address_neighborhood: str = Form(...),
-    category_ids: List[int] = Form([]), # Lista de IDs das categorias marcadas
+    category_ids: List[int] = Form([]),
     db: Session = Depends(get_db)
 ):
     categorias = db.query(Category).all()
     
-    # 1. Verifica se o email já existe
+    # Validação de Email Duplicado
     if db.query(User).filter(User.email == email).first():
         return templates.TemplateResponse("cadastro.html", {
             "request": request,
             "categorias": categorias,
-            "msg_erro": "Eita! Esse e-mail já está cadastrado."
+            "msg_erro": "Esse e-mail já possui cadastro!"
         })
 
+    # Limpeza do Instagram (Tira o @ se a pessoa colocou)
+    insta_clean = instagram
+    if insta_clean and insta_clean.startswith("@"):
+        insta_clean = insta_clean.replace("@", "")
+    if insta_clean == "": # Se deixou vazio
+        insta_clean = None
+
     try:
-        # 2. Cria o Usuário (Login)
+        # 1. Cria Usuário
         hashed_pwd = get_password_hash(password)
         new_user = User(
             email=email,
@@ -101,15 +104,16 @@ def submit_cadastro(
         db.commit()
         db.refresh(new_user)
 
-        # 3. Cria o Perfil Profissional
+        # 2. Cria Perfil Profissional
         new_provider = Provider(
             id=new_user.id,
             whatsapp=whatsapp,
+            instagram=insta_clean, # <--- Salva no Banco
             bio=bio,
             address_neighborhood=address_neighborhood
         )
         
-        # 4. Vincula as Categorias
+        # 3. Vincula Categorias
         if category_ids:
             cats_db = db.query(Category).filter(Category.id.in_(category_ids)).all()
             new_provider.categories = cats_db
@@ -117,16 +121,15 @@ def submit_cadastro(
         db.add(new_provider)
         db.commit()
 
-        # Retorna sucesso
         return templates.TemplateResponse("cadastro.html", {
             "request": request,
             "categorias": categorias,
-            "msg_sucesso": "Cadastro realizado com sucesso! Agora você aparece na busca."
+            "msg_sucesso": "Cadastro realizado com sucesso! Bem-vindo(a)!"
         })
 
     except Exception as e:
         return templates.TemplateResponse("cadastro.html", {
             "request": request,
             "categorias": categorias,
-            "msg_erro": f"Erro no sistema: {str(e)}"
+            "msg_erro": f"Erro interno: {str(e)}"
         })

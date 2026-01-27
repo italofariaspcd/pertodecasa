@@ -8,85 +8,30 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <style>
-        /* --- IDENTIDADE VISUAL NORDESTINA --- */
         :root {
-            --cor-terracota: #B7410E; /* Cor de telha/barro */
-            --cor-areia: #FAF3E0;     /* Fundo claro */
-            --cor-mandacaru: #2E7D32; /* Verde WhatsApp/Cacto */
-            --cor-sol: #FF6F00;       /* Laranja forte */
+            --cor-terracota: #B7410E;
+            --cor-areia: #FAF3E0;
+            --cor-mandacaru: #2E7D32;
+            --cor-sol: #FF6F00;
         }
 
-        body {
-            background-color: var(--cor-areia);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        body { background-color: var(--cor-areia); font-family: 'Segoe UI', sans-serif; }
+        
+        .navbar { background-color: var(--cor-terracota); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        .btn-buscar { background-color: var(--cor-terracota); color: white; font-weight: 600; border: none; }
+        .btn-buscar:hover { background-color: #9c350b; color: white; }
 
-        .navbar {
-            background-color: var(--cor-terracota);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+        .card-profissional { border: none; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; }
+        .card-profissional:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
 
-        .btn-buscar {
-            background-color: var(--cor-terracota);
-            color: white;
-            border: none;
-            font-weight: 600;
-        }
-        .btn-buscar:hover {
-            background-color: #9c350b;
-            color: white;
-        }
+        .tag-categoria { background-color: var(--cor-sol); color: white; font-size: 0.75rem; padding: 4px 10px; border-radius: 20px; font-weight: bold; text-transform: uppercase; }
 
-        .card-profissional {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
-            background-color: white;
-        }
-        .card-profissional:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        }
+        .btn-whats { background-color: var(--cor-mandacaru); color: white; border-radius: 50px; padding: 8px 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; font-weight: 500; }
+        .btn-whats:hover { background-color: #1b5e20; color: white; }
 
-        .tag-categoria {
-            background-color: var(--cor-sol);
-            color: white;
-            font-size: 0.75rem;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .btn-whats {
-            background-color: var(--cor-mandacaru);
-            color: white;
-            border-radius: 50px;
-            padding: 8px 20px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-weight: 500;
-            transition: background-color 0.3s;
-        }
-        .btn-whats:hover {
-            background-color: #1b5e20;
-            color: white;
-        }
-
-        .btn-sou-pro {
-            background-color: rgba(255, 255, 255, 0.9);
-            color: var(--cor-terracota);
-            font-weight: bold;
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-        .btn-sou-pro:hover {
-            background-color: white;
-            color: #9c350b;
-        }
+        .btn-sou-pro { background-color: rgba(255, 255, 255, 0.9); color: var(--cor-terracota); font-weight: bold; border-radius: 20px; font-size: 0.9rem; }
+        .btn-sou-pro:hover { background-color: white; color: #9c350b; }
     </style>
 </head>
 <body>
@@ -115,7 +60,7 @@
                     <div class="col-md-5">
                         <label class="form-label text-muted small fw-bold">O QUE VOCÊ PRECISA?</label>
                         <select name="category_slug" class="form-select form-select-lg border-secondary-subtle" required>
-                            <option value="" disabled selected>Selecione uma profissão...</option>
+                            <option value="" disabled selected>Selecione...</option>
                             {% for cat in categorias %}
                                 <option value="{{ cat.slug }}" {% if cat.slug == categoria_selecionada %}selected{% endif %}>
                                     {{ cat.name }}
@@ -172,9 +117,18 @@
                                         <span class="tag-categoria">{{ c.name }}</span>
                                     {% endfor %}
                                 </div>
-                                <a href="https://wa.me/55{{ p.whatsapp }}" target="_blank" class="btn-whats hover-shadow">
-                                    <span class="material-icons" style="font-size: 18px;">message</span> WhatsApp
-                                </a>
+                                
+                                <div class="d-flex gap-2">
+                                    {% if p.instagram %}
+                                    <a href="https://instagram.com/{{ p.instagram }}" target="_blank" class="btn btn-light border text-danger rounded-circle d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;" title="Ver Instagram">
+                                        <span class="material-icons" style="font-size: 20px;">photo_camera</span>
+                                    </a>
+                                    {% endif %}
+
+                                    <a href="https://wa.me/55{{ p.whatsapp }}" target="_blank" class="btn-whats hover-shadow">
+                                        <span class="material-icons" style="font-size: 18px;">message</span> WhatsApp
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
