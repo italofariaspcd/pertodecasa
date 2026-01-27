@@ -1,3 +1,5 @@
+# Arquivo: schemas.py
+
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -8,7 +10,7 @@ class CategoryBase(BaseModel):
     slug: str
     group: str
     class Config:
-        orm_mode = True
+        from_attributes = True  # <--- MUDOU AQUI (Era orm_mode)
 
 class AddressBase(BaseModel):
     neighborhood: str
@@ -25,8 +27,8 @@ class UserCreate(BaseModel):
     # Campos opcionais se for prestador
     whatsapp: Optional[str] = None
     bio: Optional[str] = None
-    category_ids: Optional[List[int]] = [] # IDs das categorias que ele atende
-    address_neighborhood: Optional[str] = None # Bairro para cadastro rápido
+    category_ids: Optional[List[int]] = []
+    address_neighborhood: Optional[str] = None 
 
 # --- Respostas (Output) ---
 class ProviderListDTO(BaseModel):
@@ -34,7 +36,7 @@ class ProviderListDTO(BaseModel):
     whatsapp: str
     bio: str
     neighborhood: str
-    categories: List[str] # Lista de nomes das categorias
+    categories: List[str] 
     
     class Config:
-        orm_mode = True
+        from_attributes = True # <--- MUDOU AQUI TAMBÉM
