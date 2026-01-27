@@ -1,102 +1,123 @@
-from database import SessionLocal, engine, Base
-from models import Category
-from sqlalchemy.exc import IntegrityError
+from database import SessionLocal, engine
+from models import Base, Category
+import unicodedata
+import re
 
-# Garante que as tabelas existam antes de inserir os dados
+# 1. Garante que as tabelas existem
 Base.metadata.create_all(bind=engine)
 
 db = SessionLocal()
 
-# Lista MÁXIMA de Categorias organizadas por "Grupos"
-categorias_completas = [
-    # --- MANUTENÇÃO E REPAROS ---
-    {"name": "Ar-Condicionado e Refrigeração", "slug": "refrigeracao", "group": "Manutenção"},
-    {"name": "Eletricista", "slug": "eletricista", "group": "Manutenção"},
-    {"name": "Encanador / Bombeiro Hidráulico", "slug": "encanador", "group": "Manutenção"},
-    {"name": "Pedreiro", "slug": "pedreiro", "group": "Construção"},
-    {"name": "Pintor", "slug": "pintor", "group": "Construção"},
-    {"name": "Marido de Aluguel", "slug": "marido-de-aluguel", "group": "Manutenção"},
-    {"name": "Gesseiro", "slug": "gesseiro", "group": "Construção"},
-    {"name": "Serralheiro", "slug": "serralheiro", "group": "Construção"},
-    {"name": "Vidraceiro", "slug": "vidraceiro", "group": "Construção"},
-    {"name": "Marceneiro", "slug": "marceneiro", "group": "Construção"},
-    {"name": "Desentupidora", "slug": "desentupidora", "group": "Manutenção"},
-    {"name": "Dedetizadora", "slug": "dedetizadora", "group": "Manutenção"},
-    {"name": "Conserto de Telhados e Calhas", "slug": "telhados", "group": "Construção"},
+# 2. Lista GIGANTE de Categorias
+categorias = [
+    # --- NOVOS PEDIDOS ---
+    "Vendedor de Doces",
+    "Cuidador de Pets",
+    "Nômade Digital",
+    "Manutenção de Computadores",
+    "Consultor",
+    "Organizador de Festa",
+    "Escritor de Convites",
+    
+    # --- COACHING PESSOAL ---
+    "Coaching Pessoal",
+    "Coach de Relacionamentos",
+    "Coach de Inteligência Emocional",
+    "Coach Financeiro",
+    "Coach Espiritual",
+    "Coach de Emagrecimento",
+    "Coach Esportivo",
 
-    # --- TÉCNICA E ELETRÔNICOS ---
-    {"name": "Assistência Técnica de Celular", "slug": "celular", "group": "Técnica"},
-    {"name": "Formatação e PC", "slug": "informatica", "group": "Técnica"},
-    {"name": "Conserto de Eletrodomésticos", "slug": "eletrodomesticos", "group": "Técnica"},
-    {"name": "Instalação de Câmeras e Alarmes", "slug": "seguranca", "group": "Técnica"},
-    {"name": "Instalação de Antenas e TV", "slug": "antenas", "group": "Técnica"},
+    # --- COACHING PROFISSIONAL ---
+    "Coaching Profissional",
+    "Coach Corporativo",
+    "Coach de Performance",
+    "Coach de Carreira",
+    "Coach de Equipes",
+    "Coach de Liderança",
+    "Coach de Vendas",
 
-    # --- BELEZA E BEM-ESTAR ---
-    {"name": "Manicure e Pedicure", "slug": "manicure", "group": "Beleza"},
-    {"name": "Cabeleireira", "slug": "cabeleireira", "group": "Beleza"},
-    {"name": "Barbeiro", "slug": "barbeiro", "group": "Beleza"},
-    {"name": "Design de Sobrancelhas", "slug": "sobrancelhas", "group": "Beleza"},
-    {"name": "Depilação", "slug": "depilacao", "group": "Beleza"},
-    {"name": "Maquiadora", "slug": "maquiadora", "group": "Beleza"},
-    {"name": "Esteticista", "slug": "esteticista", "group": "Beleza"},
-    {"name": "Massoterapeuta", "slug": "massagem", "group": "Bem-Estar"},
-    {"name": "Podóloga", "slug": "podologia", "group": "Bem-Estar"},
+    # --- SERVIÇOS ESSENCIAIS (Mantidos) ---
+    "Pedreiro",
+    "Pintor",
+    "Eletricista",
+    "Encanador",
+    "Gesseiro",
+    "Marceneiro",
+    "Serralheiro",
+    "Vidraceiro",
+    "Mestre de Obras",
+    
+    # --- DOMÉSTICO ---
+    "Faxina",
+    "Diarista",
+    "Passadeira",
+    "Cozinheira",
+    "Jardineiro",
+    "Piscineiro",
+    "Babá",
+    "Cuidador de Idosos",
 
-    # --- SERVIÇOS DOMÉSTICOS ---
-    {"name": "Diarista", "slug": "diarista", "group": "Doméstico"},
-    {"name": "Passadeira", "slug": "passadeira", "group": "Doméstico"},
-    {"name": "Lavadeira", "slug": "lavadeira", "group": "Doméstico"},
-    {"name": "Limpeza de Estofados e Tapetes", "slug": "limpeza-estofados", "group": "Doméstico"},
-    {"name": "Cozinheira em Domicílio", "slug": "cozinheira", "group": "Doméstico"},
-    {"name": "Babá", "slug": "baba", "group": "Doméstico"},
-    {"name": "Cuidador de Idosos", "slug": "cuidador", "group": "Doméstico"},
-    {"name": "Jardineiro", "slug": "jardineiro", "group": "Doméstico"},
-    {"name": "Piscineiro", "slug": "piscineiro", "group": "Doméstico"},
+    # --- BELEZA ---
+    "Cabeleireiro",
+    "Barbeiro",
+    "Manicure / Pedicure",
+    "Maquiadora",
+    "Designer de Sobrancelhas",
+    "Depiladora",
 
-    # --- FESTAS E EVENTOS ---
-    {"name": "Boleira / Confeiteira", "slug": "bolos", "group": "Festas"},
-    {"name": "Salgadeiro(a)", "slug": "salgados", "group": "Festas"},
-    {"name": "Churrasqueiro", "slug": "churrasqueiro", "group": "Festas"},
-    {"name": "Decoração de Festas", "slug": "decoracao", "group": "Festas"},
-    {"name": "Garçom e Copeira", "slug": "garcom", "group": "Festas"},
-    {"name": "DJ e Som", "slug": "dj", "group": "Festas"},
-    {"name": "Fotógrafo", "slug": "fotografo", "group": "Festas"},
+    # --- ALIMENTAÇÃO ---
+    "Boleira",
+    "Salgadeira",
+    "Confeiteira",
+    "Churrasqueiro",
+    "Garçom",
 
-    # --- SERVIÇOS DIVERSOS ---
-    {"name": "Costureira e Ajustes", "slug": "costureira", "group": "Moda"},
-    {"name": "Lavagem de Carro (Delivery)", "slug": "lava-jato", "group": "Automotivo"},
-    {"name": "Mecânico", "slug": "mecanico", "group": "Automotivo"},
-    {"name": "Borracheiro", "slug": "borracheiro", "group": "Automotivo"},
-    {"name": "Fretes e Mudanças", "slug": "fretes", "group": "Transporte"},
-    {"name": "Motoboy", "slug": "motoboy", "group": "Transporte"},
-    {"name": "Passeador de Cães (Pet Sitter)", "slug": "pet-sitter", "group": "Pet"},
-    {"name": "Banho e Tosa em Domicílio", "slug": "banho-tosa", "group": "Pet"},
-    {"name": "Aulas Particulares / Reforço", "slug": "aulas", "group": "Educação"},
-    {"name": "Personal Trainer", "slug": "personal", "group": "Saúde"},
+    # --- TÉCNICA E TRANSPORTE ---
+    "Técnico de Celular",
+    "Técnico de Ar-condicionado",
+    "Técnico de Geladeira",
+    "Montador de Móveis",
+    "Motorista / Frete",
+    "Motoboy",
+    
+    # --- ENSINO ---
+    "Professor Particular",
+    "Personal Trainer"
 ]
 
-print("Iniciando cadastro de categorias no banco de dados...")
+# Função auxiliar para criar slugs limpos (remove acentos e caracteres especiais)
+def criar_slug(texto):
+    # Normaliza para ASCII (remove acentos)
+    texto = unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('utf-8')
+    texto = texto.lower().strip()
+    # Remove caracteres que não sejam letras, números ou espaços
+    texto = re.sub(r'[^a-z0-9\s-]', '', texto)
+    # Troca espaços por traços
+    texto = re.sub(r'[\s]+', '-', texto)
+    return texto
+
+print("🌱 Plantando categorias no Perto de Casa Nordeste...")
 
 count = 0
-for cat_data in categorias_completas:
-    # Verifica se já existe pelo 'slug' para não duplicar se você rodar o script 2 vezes
-    exists = db.query(Category).filter_by(slug=cat_data["slug"]).first()
+for nome in categorias:
+    slug = criar_slug(nome)
     
-    if not exists:
-        nova_cat = Category(
-            name=cat_data["name"],
-            slug=cat_data["slug"],
-            group=cat_data["group"],
-            icon="fa-circle" # Ícone padrão
-        )
+    # Verifica se já existe
+    existe = db.query(Category).filter(Category.slug == slug).first()
+    if not existe:
+        nova_cat = Category(name=nome, slug=slug)
         db.add(nova_cat)
+        print(f"✅ {nome} adicionado!")
         count += 1
+    else:
+        # Se já existe, ignoramos (para não dar erro)
+        pass
 
-try:
-    db.commit()
-    print(f"Sucesso! {count} novas categorias foram cadastradas no 'Perto de Casa'.")
-except Exception as e:
-    db.rollback()
-    print(f"Erro ao salvar: {e}")
-finally:
-    db.close()
+db.commit()
+db.close()
+
+if count == 0:
+    print("\n⚠️ Nenhuma categoria nova precisou ser adicionada (todas já existiam).")
+else:
+    print(f"\n🎉 Sucesso! {count} novas categorias adicionadas ao sistema.")
