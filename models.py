@@ -17,8 +17,8 @@ class Profissional(Base):
     descricao = Column(String)
     categoria_id = Column(Integer, ForeignKey("categorias.id"))
     
-    # NOVOS CAMPOS: Controle da taxa de R$ 20,00
+    # Controle da taxa de R$ 20,00
     aceitou_taxa = Column(Boolean, default=True)
-    ativo = Column(Boolean, default=True) # Se for False, o profissional some das buscas
+    ativo = Column(Boolean, default=True) # Se for False, some das buscas
 
     categoria = relationship("Categoria", back_populates="profissionais")

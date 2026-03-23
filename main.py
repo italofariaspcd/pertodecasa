@@ -12,7 +12,7 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
 def home(request: Request, db: Session = Depends(get_db)):
-    # FILTRO NOVO: Só exibe quem está com ativo=True
+    # Só exibe profissionais ativos
     profissionais = db.query(models.Profissional).filter(models.Profissional.ativo == True).all()
     return templates.TemplateResponse("index.html", {"request": request, "profissionais": profissionais})
 
@@ -28,7 +28,7 @@ def salvar_cadastro(
     cidade: str = Form(...),
     descricao: str = Form(...),
     categoria_id: int = Form(...),
-    taxaMensal: bool = Form(...), # NOVO: Recebe o aceite da taxa
+    taxaMensal: bool = Form(...),
     db: Session = Depends(get_db)
 ):
     novo_profissional = models.Profissional(
@@ -37,25 +37,23 @@ def salvar_cadastro(
         cidade=cidade,
         descricao=descricao,
         categoria_id=categoria_id,
-        aceitou_taxa=taxaMensal, # NOVO: Salva que ele aceitou
-        ativo=True               # NOVO: Já entra ativo no site
+        aceitou_taxa=taxaMensal,
+        ativo=True 
     )
     db.add(novo_profissional)
     db.commit()
     return RedirectResponse(url="/", status_code=303)
+
 # ==========================================
 # ÁREA DO ADMINISTRADOR
 # ==========================================
-
 @app.get("/admin")
 def painel_admin(request: Request, db: Session = Depends(get_db)):
-    # Puxa TODOS os profissionais (ativos e inativos)
     profissionais = db.query(models.Profissional).all()
     return templates.TemplateResponse("admin.html", {"request": request, "profissionais": profissionais})
 
 @app.get("/admin/alternar/{prof_id}")
 def alternar_status(prof_id: int, db: Session = Depends(get_db)):
-    # Muda o status de Ativo para Inativo, e vice-versa
     prof = db.query(models.Profissional).filter(models.Profissional.id == prof_id).first()
     if prof:
         prof.ativo = not prof.ativo
@@ -64,7 +62,6 @@ def alternar_status(prof_id: int, db: Session = Depends(get_db)):
 
 @app.get("/admin/deletar/{prof_id}")
 def deletar_profissional(prof_id: int, db: Session = Depends(get_db)):
-    # Apaga o profissional do banco de dados definitivamente
     prof = db.query(models.Profissional).filter(models.Profissional.id == prof_id).first()
     if prof:
         db.delete(prof)
