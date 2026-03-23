@@ -11,8 +11,8 @@ from database import engine, get_db
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
-# Middleware para as mensagens de sucesso
-app.add_middleware(SessionMiddleware, secret_key="caju-valley-key-123")
+# Middleware para que a mensagem de "Cadastro com Sucesso" funcione entre páginas
+app.add_middleware(SessionMiddleware, secret_key="caju-valley-key-123-secreto")
 
 templates = Jinja2Templates(directory="templates")
 
@@ -20,6 +20,7 @@ templates = Jinja2Templates(directory="templates")
 def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db)):
     profissionais = []
     buscou = False
+    # Recupera a mensagem de sucesso se ela existir na sessão
     sucesso = request.session.pop("mensagem_sucesso", None)
     
     if q and q.strip() != "":
@@ -48,18 +49,28 @@ def form_cadastro(request: Request, db: Session = Depends(get_db)):
 @app.post("/cadastrar")
 def salvar_cadastro(
     request: Request,
-    nome: str = Form(...), telefone: str = Form(...), cidade: str = Form(...),
-    descricao: str = Form(...), categoria_id: int = Form(...),
-    taxaMensal: bool = Form(...), redes_sociais: Optional[str] = Form(""),
+    nome: str = Form(...), 
+    telefone: str = Form(...), 
+    cidade: str = Form(...),
+    descricao: str = Form(...), 
+    categoria_id: int = Form(...),
+    taxaMensal: bool = Form(...), 
+    redes_sociais: Optional[str] = Form(""),
     db: Session = Depends(get_db)
 ):
-    novo = models.Profissional(
-        nome=nome, telefone=telefone, cidade=cidade, descricao=descricao,
-        categoria_id=categoria_id, redes_sociais=redes_sociais,
-        aceitou_taxa=taxaMensal, ativo=True 
+    novo_profissional = models.Profissional(
+        nome=nome, 
+        telefone=telefone, 
+        cidade=cidade, 
+        descricao=descricao,
+        categoria_id=categoria_id, 
+        redes_sociais=redes_sociais,
+        aceitou_taxa=taxaMensal, 
+        ativo=True 
     )
-    db.add(novo)
+    db.add(novo_profissional)
     db.commit()
+    # Define o aviso para a tela inicial
     request.session["mensagem_sucesso"] = "Cadastro realizado com sucesso!"
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
@@ -67,7 +78,7 @@ def salvar_cadastro(
 def pagina_contato(request: Request):
     return templates.TemplateResponse("contato.html", {"request": request})
 
-# --- SEÇÃO ADMINISTRATIVA (CORRIGIDA) ---
+# --- ÁREA ADMINISTRATIVA ---
 
 @app.get("/admin")
 def painel_admin(request: Request, db: Session = Depends(get_db)):
