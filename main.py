@@ -15,7 +15,6 @@ templates = Jinja2Templates(directory="templates")
 @app.get("/")
 def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db)):
     query = db.query(models.Profissional).filter(models.Profissional.ativo == True)
-    
     if q:
         query = query.filter(
             or_(
@@ -24,13 +23,8 @@ def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db
                 models.Profissional.cidade.ilike(f"%{q}%")
             )
         )
-        
     profissionais = query.all()
-    return templates.TemplateResponse("index.html", {
-        "request": request, 
-        "profissionais": profissionais,
-        "termo_busca": q
-    })
+    return templates.TemplateResponse("index.html", {"request": request, "profissionais": profissionais, "termo_busca": q})
 
 @app.get("/cadastro")
 def form_cadastro(request: Request, db: Session = Depends(get_db)):
@@ -45,16 +39,13 @@ def salvar_cadastro(
     descricao: str = Form(...),
     categoria_id: int = Form(...),
     taxaMensal: bool = Form(...),
+    redes_sociais: Optional[str] = Form(""),
     db: Session = Depends(get_db)
 ):
     novo_profissional = models.Profissional(
-        nome=nome,
-        telefone=telefone,
-        cidade=cidade,
-        descricao=descricao,
-        categoria_id=categoria_id,
-        aceitou_taxa=taxaMensal,
-        ativo=True 
+        nome=nome, telefone=telefone, cidade=cidade, descricao=descricao,
+        categoria_id=categoria_id, redes_sociais=redes_sociais,
+        aceitou_taxa=taxaMensal, ativo=True 
     )
     db.add(novo_profissional)
     db.commit()
@@ -79,5 +70,33 @@ def deletar_profissional(prof_id: int, db: Session = Depends(get_db)):
     prof = db.query(models.Profissional).filter(models.Profissional.id == prof_id).first()
     if prof:
         db.delete(prof)
+        db.commit()
+    return RedirectResponse(url="/admin", status_code=303)
+
+@app.get("/admin/editar/{prof_id}")
+def form_editar(prof_id: int, request: Request, db: Session = Depends(get_db)):
+    prof = db.query(models.Profissional).filter(models.Profissional.id == prof_id).first()
+    categorias = db.query(models.Categoria).order_by(models.Categoria.nome).all()
+    return templates.TemplateResponse("editar.html", {"request": request, "profissional": prof, "categorias": categorias})
+
+@app.post("/admin/editar/{prof_id}")
+def salvar_edicao(
+    prof_id: int,
+    nome: str = Form(...),
+    telefone: str = Form(...),
+    cidade: str = Form(...),
+    descricao: str = Form(...),
+    categoria_id: int = Form(...),
+    redes_sociais: Optional[str] = Form(""),
+    db: Session = Depends(get_db)
+):
+    prof = db.query(models.Profissional).filter(models.Profissional.id == prof_id).first()
+    if prof:
+        prof.nome = nome
+        prof.telefone = telefone
+        prof.cidade = cidade
+        prof.descricao = descricao
+        prof.categoria_id = categoria_id
+        prof.redes_sociais = redes_sociais
         db.commit()
     return RedirectResponse(url="/admin", status_code=303)

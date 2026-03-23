@@ -7,21 +7,24 @@ def popular_categorias():
     db = SessionLocal()
     
     categorias_iniciais = [
-        "Pedreiro", "Eletricista", "Encanador", "Pintor", "Carpinteiro", 
-        "Marceneiro", "Serralheiro", "Gesseiro", "Vidraceiro", "Mestre de Obras",
-        "Diarista", "Faxineira", "Babá", "Cuidador(a) de Idosos", 
-        "Cozinheira", "Jardineiro", "Piscineiro", "Passadeira",
-        "Técnico em Refrigeração", "Técnico em Informática", 
-        "Conserto de Celulares", "Conserto de Eletrodomésticos", "Montador de Móveis", 
-        "Chaveiro", "Mecânico de Autos", "Mecânico de Motos", "Borracheiro",
-        "Manicure e Pedicure", "Cabeleireiro(a)", "Barbeiro", "Maquiador(a)", 
-        "Esteticista", "Designer de Sobrancelhas", "Depiladora", "Massagista",
-        "Confeiteira (Bolos e Doces)", "Salgadeira", "Churrasqueiro", "Garçom", 
-        "Fotógrafo", "Videomaker", "Decorador de Festas", "DJ / Som",
-        "Fretes e Mudanças", "Motoboy", "Motorista Particular", "Transporte Escolar",
-        "Professor(a) Particular", "Personal Trainer", "Advogado(a)", 
-        "Contador(a)", "Fisioterapeuta", "Psicólogo(a)", "Veterinário", "Banho e Tosa"
+        "Advogado(a)", "Babá", "Banho e Tosa", "Barbeiro", "Borracheiro", 
+        "Cabeleireiro(a)", "Carpinteiro", "Chaveiro", "Churrasqueiro", 
+        "Confeiteira (Bolos e Doces)", "Conserto de Celulares", 
+        "Conserto de Eletrodomésticos", "Contador(a)", "Costureira", "Cozinheira", 
+        "Cuidador(a) de Idosos", "Decorador de Festas", "Depiladora", 
+        "Designer de Sobrancelhas", "DJ / Som", "Diarista", "Eletricista", 
+        "Encanador", "Esteticista", "Faxineira", "Fisioterapeuta", "Fotógrafo", 
+        "Fretes e Mudanças", "Garçom", "Gesseiro", "Jardineiro", "Manicure e Pedicure", 
+        "Maquiador(a)", "Marceneiro", "Massagista", "Mecânico de Autos", 
+        "Mecânico de Motos", "Mestre de Obras", "Montador de Móveis", "Motoboy", 
+        "Motorista Particular", "Passadeira", "Pedreiro", "Personal Trainer", 
+        "Pintor", "Piscineiro", "Professor(a) Particular", "Psicólogo(a)", 
+        "Salgadeira", "Serralheiro", "Transporte Escolar", "Técnico em Informática", 
+        "Técnico em Refrigeração", "Veterinário", "Videomaker", "Vidraceiro"
     ]
+    
+    # Ordena alfabeticamente antes de inserir
+    categorias_iniciais.sort()
     
     print("Inserindo categorias...")
     try:
