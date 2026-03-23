@@ -13,9 +13,11 @@ class Profissional(Base):
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String, index=True)
     telefone = Column(String)
-    cidade = Column(String, default="Capela")
-    descricao = Column(String)
     redes_sociais = Column(String, nullable=True)
+    endereco = Column(String) # Novo: Rua/Avenida
+    numero = Column(String)   # Novo: Número da casa/ponto
+    cidade = Column(String)   # Seleção por lista
+    descricao = Column(String)
     categoria_id = Column(Integer, ForeignKey("categorias.id"))
     
     aceitou_taxa = Column(Boolean, default=True)
