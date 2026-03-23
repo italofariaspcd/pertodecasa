@@ -60,13 +60,16 @@
             <form action="/" method="get">
                 <div class="row g-3 align-items-end">
                     <div class="col-md-5">
-                        <label class="form-label text-muted small fw-bold">SERVIÇO</label>
-                        <select name="category_slug" class="form-select form-select-lg border-0 bg-light" required>
-                            <option value="" disabled selected>Ex: Eletricista, Diarista...</option>
+                        <label class="form-label text-muted small fw-bold">O QUE VOCÊ BUSCA?</label>
+                        
+                        <input type="text" name="servico" list="lista-categorias" class="form-control form-control-lg border-0 bg-light" placeholder="Ex: Eletricista, Diarista..." value="{{ servico_buscado }}" autocomplete="off">
+                        
+                        <datalist id="lista-categorias">
                             {% for cat in categorias %}
-                                <option value="{{ cat.slug }}" {% if cat.slug == categoria_selecionada %}selected{% endif %}>{{ cat.name }}</option>
+                                <option value="{{ cat.name }}">
                             {% endfor %}
-                        </select>
+                        </datalist>
+
                     </div>
                     <div class="col-md-5">
                         <label class="form-label text-muted small fw-bold">BAIRRO OU CIDADE</label>

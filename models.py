@@ -12,7 +12,7 @@ class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
-    full_name = Column(String) # Sem coluna de senha
+    full_name = Column(String)
     is_provider = Column(Boolean, default=False)
     
     provider = relationship("Provider", back_populates="user", uselist=False)
@@ -23,7 +23,8 @@ class Category(Base):
     name = Column(String, unique=True)
     slug = Column(String, unique=True)
     
-    providers = relationship("Provider", secondary=provider_category, backref="category_list")
+    # CORREÇÃO: Usando back_populates limpo, sem conflitos
+    providers = relationship("Provider", secondary=provider_category, back_populates="categories")
 
 class Provider(Base):
     __tablename__ = "providers"
@@ -35,4 +36,6 @@ class Provider(Base):
     is_vip = Column(Boolean, default=False) 
 
     user = relationship("User", back_populates="provider")
-    categories = relationship("Category", secondary=provider_category, backref="provider_list")
+    
+    # CORREÇÃO: Usando back_populates limpo, sem conflitos
+    categories = relationship("Category", secondary=provider_category, back_populates="providers")

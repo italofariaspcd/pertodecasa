@@ -1,123 +1,132 @@
-from database import SessionLocal, engine
-from models import Base, Category
-import unicodedata
-import re
+from database import engine, SessionLocal, Base
+from models import Category
 
-# 1. Garante que as tabelas existem
+# Garante que as tabelas existem
 Base.metadata.create_all(bind=engine)
 
 db = SessionLocal()
 
-# 2. Lista GIGANTE de Categorias
+# MEGA LISTA DE CATEGORIAS DE SERVIÇOS
 categorias = [
-    # --- NOVOS PEDIDOS ---
-    "Vendedor de Doces",
-    "Cuidador de Pets",
-    "Nômade Digital",
-    "Manutenção de Computadores",
-    "Consultor",
-    "Organizador de Festa",
-    "Escritor de Convites",
-    
-    # --- COACHING PESSOAL ---
-    "Coaching Pessoal",
-    "Coach de Relacionamentos",
-    "Coach de Inteligência Emocional",
-    "Coach Financeiro",
-    "Coach Espiritual",
-    "Coach de Emagrecimento",
-    "Coach Esportivo",
+    # 🏠 Construção e Reformas
+    {"name": "Pedreiro", "slug": "pedreiro"},
+    {"name": "Eletricista", "slug": "eletricista"},
+    {"name": "Encanador", "slug": "encanador"},
+    {"name": "Pintor", "slug": "pintor"},
+    {"name": "Marceneiro", "slug": "marceneiro"},
+    {"name": "Gesseiro / Drywall", "slug": "gesseiro"},
+    {"name": "Serralheiro", "slug": "serralheiro"},
+    {"name": "Vidraceiro", "slug": "vidraceiro"},
+    {"name": "Montador de Móveis", "slug": "montador-de-moveis"},
+    {"name": "Instalador de Ar-condicionado", "slug": "instalador-ar-condicionado"},
+    {"name": "Arquiteto(a)", "slug": "arquiteto"},
+    {"name": "Engenheiro(a) Civil", "slug": "engenheiro-civil"},
+    {"name": "Mestre de Obras", "slug": "mestre-de-obras"},
+    {"name": "Impermeabilizador", "slug": "impermeabilizador"},
+    {"name": "Tapeceiro", "slug": "tapeceiro"},
+    {"name": "Limpeza de Terreno / Roçagem", "slug": "limpeza-terreno"},
 
-    # --- COACHING PROFISSIONAL ---
-    "Coaching Profissional",
-    "Coach Corporativo",
-    "Coach de Performance",
-    "Coach de Carreira",
-    "Coach de Equipes",
-    "Coach de Liderança",
-    "Coach de Vendas",
+    # 🧹 Serviços Domésticos
+    {"name": "Diarista / Faxineira", "slug": "diarista-faxineira"},
+    {"name": "Babá", "slug": "baba"},
+    {"name": "Cuidador(a) de Idosos", "slug": "cuidador-idosos"},
+    {"name": "Passadeira", "slug": "passadeira"},
+    {"name": "Cozinheira", "slug": "cozinheira"},
+    {"name": "Jardineiro", "slug": "jardineiro"},
+    {"name": "Limpeza de Piscina", "slug": "limpeza-piscina"},
+    {"name": "Desinsetização / Dedetização", "slug": "dedetizacao"},
 
-    # --- SERVIÇOS ESSENCIAIS (Mantidos) ---
-    "Pedreiro",
-    "Pintor",
-    "Eletricista",
-    "Encanador",
-    "Gesseiro",
-    "Marceneiro",
-    "Serralheiro",
-    "Vidraceiro",
-    "Mestre de Obras",
-    
-    # --- DOMÉSTICO ---
-    "Faxina",
-    "Diarista",
-    "Passadeira",
-    "Cozinheira",
-    "Jardineiro",
-    "Piscineiro",
-    "Babá",
-    "Cuidador de Idosos",
+    # 📱 Assistência Técnica
+    {"name": "Manutenção de Celular", "slug": "manutencao-celular"},
+    {"name": "Manutenção de Computador / TI", "slug": "manutencao-computador"},
+    {"name": "Conserto de Geladeira / Freezer", "slug": "conserto-geladeira"},
+    {"name": "Conserto de Máquina de Lavar", "slug": "conserto-maquina-lavar"},
+    {"name": "Conserto de TV", "slug": "conserto-tv"},
+    {"name": "Conserto de Micro-ondas", "slug": "conserto-microondas"},
+    {"name": "Eletrodomésticos em Geral", "slug": "conserto-eletrodomesticos"},
 
-    # --- BELEZA ---
-    "Cabeleireiro",
-    "Barbeiro",
-    "Manicure / Pedicure",
-    "Maquiadora",
-    "Designer de Sobrancelhas",
-    "Depiladora",
+    # 🚗 Automotivo
+    {"name": "Mecânico", "slug": "mecanico"},
+    {"name": "Socorro Automotivo / Guincho", "slug": "guincho"},
+    {"name": "Eletricista de Autos", "slug": "eletricista-autos"},
+    {"name": "Borracharia", "slug": "borracharia"},
+    {"name": "Chaveiro", "slug": "chaveiro"},
+    {"name": "Lavagem / Estética Automotiva", "slug": "estetica-automotiva"},
 
-    # --- ALIMENTAÇÃO ---
-    "Boleira",
-    "Salgadeira",
-    "Confeiteira",
-    "Churrasqueiro",
-    "Garçom",
+    # 💅 Beleza, Estética e Moda
+    {"name": "Manicure e Pedicure", "slug": "manicure-pedicure"},
+    {"name": "Cabeleireiro(a)", "slug": "cabeleireiro"},
+    {"name": "Barbeiro", "slug": "barbeiro"},
+    {"name": "Maquiador(a)", "slug": "maquiador"},
+    {"name": "Designer de Sobrancelhas", "slug": "designer-sobrancelhas"},
+    {"name": "Depiladora", "slug": "depiladora"},
+    {"name": "Esteticista", "slug": "esteticista"},
+    {"name": "Podólogo(a)", "slug": "podologo"},
+    {"name": "Costureira / Alfaiate", "slug": "costureira"},
+    {"name": "Sapateiro", "slug": "sapateiro"},
 
-    # --- TÉCNICA E TRANSPORTE ---
-    "Técnico de Celular",
-    "Técnico de Ar-condicionado",
-    "Técnico de Geladeira",
-    "Montador de Móveis",
-    "Motorista / Frete",
-    "Motoboy",
-    
-    # --- ENSINO ---
-    "Professor Particular",
-    "Personal Trainer"
+    # 🥳 Eventos e Gastronomia
+    {"name": "Fotógrafo(a)", "slug": "fotografo"},
+    {"name": "Videomaker / Filmagem", "slug": "videomaker"},
+    {"name": "Confeiteira / Bolos", "slug": "confeiteira"},
+    {"name": "Salgadeira", "slug": "salgadeira"},
+    {"name": "Churrasqueiro", "slug": "churrasqueiro"},
+    {"name": "Garçom / Barman", "slug": "garcom-barman"},
+    {"name": "DJ", "slug": "dj"},
+    {"name": "Músico / Cantor", "slug": "musico-cantor"},
+    {"name": "Animador(a) de Festas", "slug": "animador-festas"},
+    {"name": "Decoração de Eventos", "slug": "decoracao-eventos"},
+
+    # 🚚 Transporte e Logística
+    {"name": "Frete e Mudança", "slug": "frete-mudanca"},
+    {"name": "Motoboy / Entregador", "slug": "motoboy"},
+    {"name": "Motorista Particular / App", "slug": "motorista-particular"},
+    {"name": "Transporte Escolar", "slug": "transporte-escolar"},
+
+    # 📚 Aulas e Educação
+    {"name": "Professor(a) Particular", "slug": "professor-particular"},
+    {"name": "Aulas de Idiomas", "slug": "aulas-idiomas"},
+    {"name": "Aulas de Música / Instrumentos", "slug": "aulas-musica"},
+    {"name": "Reforço Escolar", "slug": "reforco-escolar"},
+
+    # 🩺 Saúde e Bem-Estar
+    {"name": "Personal Trainer", "slug": "personal-trainer"},
+    {"name": "Massagista", "slug": "massagista"},
+    {"name": "Nutricionista", "slug": "nutricionista"},
+    {"name": "Psicólogo(a)", "slug": "psicologo"},
+    {"name": "Fisioterapeuta", "slug": "fisioterapeuta"},
+    {"name": "Enfermeiro(a)", "slug": "enfermeiro"},
+
+    # 🐶 Pets
+    {"name": "Banho e Tosa", "slug": "banho-tosa"},
+    {"name": "Passeador de Cães (Dog Walker)", "slug": "passeador-caes"},
+    {"name": "Adestrador", "slug": "adestrador"},
+    {"name": "Veterinário(a)", "slug": "veterinario"},
+
+    # 💼 Profissionais Liberais e Tech
+    {"name": "Advogado(a)", "slug": "advogado"},
+    {"name": "Contador(a)", "slug": "contador"},
+    {"name": "Designer Gráfico", "slug": "designer-grafico"},
+    {"name": "Programador / Desenvolvedor", "slug": "programador"},
+    {"name": "Social Media / Marketing", "slug": "social-media"},
+    {"name": "Consultor(a) Financeiro", "slug": "consultor-financeiro"}
 ]
 
-# Função auxiliar para criar slugs limpos (remove acentos e caracteres especiais)
-def criar_slug(texto):
-    # Normaliza para ASCII (remove acentos)
-    texto = unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('utf-8')
-    texto = texto.lower().strip()
-    # Remove caracteres que não sejam letras, números ou espaços
-    texto = re.sub(r'[^a-z0-9\s-]', '', texto)
-    # Troca espaços por traços
-    texto = re.sub(r'[\s]+', '-', texto)
-    return texto
+print("Inserindo a MEGA lista de categorias no banco de dados...")
+adicionadas = 0
 
-print("🌱 Plantando categorias no Perto de Casa Nordeste...")
-
-count = 0
-for nome in categorias:
-    slug = criar_slug(nome)
-    
-    # Verifica se já existe
-    existe = db.query(Category).filter(Category.slug == slug).first()
+for cat in categorias:
+    # O script é inteligente: só adiciona se a categoria ainda não existir no banco
+    existe = db.query(Category).filter_by(slug=cat["slug"]).first()
     if not existe:
-        nova_cat = Category(name=nome, slug=slug)
+        nova_cat = Category(name=cat["name"], slug=cat["slug"])
         db.add(nova_cat)
-        print(f"✅ {nome} adicionado!")
-        count += 1
-    else:
-        # Se já existe, ignoramos (para não dar erro)
-        pass
+        adicionadas += 1
 
 db.commit()
 db.close()
 
-if count == 0:
-    print("\n⚠️ Nenhuma categoria nova precisou ser adicionada (todas já existiam).")
+if adicionadas > 0:
+    print(f"✅ Sucesso! {adicionadas} novas categorias foram adicionadas.")
 else:
-    print(f"\n🎉 Sucesso! {count} novas categorias adicionadas ao sistema.")
+    print("✅ O banco já possui todas essas categorias cadastradas.")

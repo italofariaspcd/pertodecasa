@@ -13,27 +13,37 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
-def read_root(request: Request, category_slug: Optional[str] = None, bairro: Optional[str] = None, db: Session = Depends(get_db)):
+def read_root(request: Request, servico: Optional[str] = None, bairro: Optional[str] = None, db: Session = Depends(get_db)):
     categorias = db.query(Category).all()
     profissionais = []
     buscar_realizada = False
 
-    if category_slug:
+    # Se o usuário digitou algo na busca de serviço ou bairro
+    if servico or bairro:
         buscar_realizada = True
-        query = db.query(Provider).join(Provider.categories)\
-                  .filter(Category.slug == category_slug)\
-                  .order_by(Provider.is_vip.desc(), Provider.address_neighborhood.asc())
         
+        # Prepara a busca unindo Profissional e Usuário
+        query = db.query(Provider).join(Provider.user)
+        
+        if servico:
+            termo = f"%{servico}%"
+            # Busca Inteligente: Procura na Categoria OU na Bio OU no Nome
+            query = query.filter(
+                Provider.categories.any(Category.name.ilike(termo)) |
+                Provider.bio.ilike(termo) |
+                User.full_name.ilike(termo)
+            )
+            
         if bairro:
             query = query.filter(Provider.address_neighborhood.ilike(f"%{bairro}%"))
             
-        providers = query.all()
+        # Ordena para os VIPs aparecerem primeiro
+        providers = query.order_by(Provider.is_vip.desc()).all()
         
         for p in providers:
-            user = db.query(User).filter(User.id == p.id).first()
             profissionais.append({
                 "id": p.id,
-                "full_name": user.full_name,
+                "full_name": p.user.full_name,
                 "whatsapp": p.whatsapp,
                 "social_link": p.social_link,
                 "bio": p.bio,
@@ -43,8 +53,12 @@ def read_root(request: Request, category_slug: Optional[str] = None, bairro: Opt
             })
 
     return templates.TemplateResponse("index.html", {
-        "request": request, "categorias": categorias, "profissionais": profissionais,
-        "buscar_realizada": buscar_realizada, "categoria_selecionada": category_slug, "bairro_atual": bairro if bairro else ""
+        "request": request, 
+        "categorias": categorias, 
+        "profissionais": profissionais,
+        "buscar_realizada": buscar_realizada, 
+        "servico_buscado": servico if servico else "", 
+        "bairro_atual": bairro if bairro else ""
     })
 
 @app.get("/cadastro", response_class=HTMLResponse)
