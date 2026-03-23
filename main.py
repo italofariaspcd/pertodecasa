@@ -43,3 +43,30 @@ def salvar_cadastro(
     db.add(novo_profissional)
     db.commit()
     return RedirectResponse(url="/", status_code=303)
+# ==========================================
+# ÁREA DO ADMINISTRADOR
+# ==========================================
+
+@app.get("/admin")
+def painel_admin(request: Request, db: Session = Depends(get_db)):
+    # Puxa TODOS os profissionais (ativos e inativos)
+    profissionais = db.query(models.Profissional).all()
+    return templates.TemplateResponse("admin.html", {"request": request, "profissionais": profissionais})
+
+@app.get("/admin/alternar/{prof_id}")
+def alternar_status(prof_id: int, db: Session = Depends(get_db)):
+    # Muda o status de Ativo para Inativo, e vice-versa
+    prof = db.query(models.Profissional).filter(models.Profissional.id == prof_id).first()
+    if prof:
+        prof.ativo = not prof.ativo
+        db.commit()
+    return RedirectResponse(url="/admin", status_code=303)
+
+@app.get("/admin/deletar/{prof_id}")
+def deletar_profissional(prof_id: int, db: Session = Depends(get_db)):
+    # Apaga o profissional do banco de dados definitivamente
+    prof = db.query(models.Profissional).filter(models.Profissional.id == prof_id).first()
+    if prof:
+        db.delete(prof)
+        db.commit()
+    return RedirectResponse(url="/admin", status_code=303)
