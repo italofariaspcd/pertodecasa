@@ -1,41 +1,24 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
 
-provider_category = Table(
-    'provider_category', Base.metadata,
-    Column('provider_id', Integer, ForeignKey('providers.id')),
-    Column('category_id', Integer, ForeignKey('categories.id'))
-)
-
-class User(Base):
-    __tablename__ = "users"
+class Categoria(Base):
+    __tablename__ = "categorias"
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    full_name = Column(String)
-    is_provider = Column(Boolean, default=False)
-    
-    provider = relationship("Provider", back_populates="user", uselist=False)
+    nome = Column(String, unique=True, index=True)
+    profissionais = relationship("Profissional", back_populates="categoria")
 
-class Category(Base):
-    __tablename__ = "categories"
+class Profissional(Base):
+    __tablename__ = "profissionais"
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True)
-    slug = Column(String, unique=True)
+    nome = Column(String, index=True)
+    telefone = Column(String)
+    cidade = Column(String, default="Capela")
+    descricao = Column(String)
+    categoria_id = Column(Integer, ForeignKey("categorias.id"))
     
-    # CORREÇÃO: Usando back_populates limpo, sem conflitos
-    providers = relationship("Provider", secondary=provider_category, back_populates="categories")
+    # NOVOS CAMPOS: Controle da taxa de R$ 20,00
+    aceitou_taxa = Column(Boolean, default=True)
+    ativo = Column(Boolean, default=True) # Se for False, o profissional some das buscas
 
-class Provider(Base):
-    __tablename__ = "providers"
-    id = Column(Integer, ForeignKey("users.id"), primary_key=True)
-    whatsapp = Column(String)
-    social_link = Column(String, nullable=True) 
-    bio = Column(String)
-    address_neighborhood = Column(String)
-    is_vip = Column(Boolean, default=False) 
-
-    user = relationship("User", back_populates="provider")
-    
-    # CORREÇÃO: Usando back_populates limpo, sem conflitos
-    categories = relationship("Category", secondary=provider_category, back_populates="providers")
+    categoria = relationship("Categoria", back_populates="profissionais")
