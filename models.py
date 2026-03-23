@@ -15,7 +15,7 @@ class Profissional(Base):
     telefone = Column(String)
     cidade = Column(String, default="Capela")
     descricao = Column(String)
-    redes_sociais = Column(String, nullable=True) # NOVO CAMPO
+    redes_sociais = Column(String, nullable=True)
     categoria_id = Column(Integer, ForeignKey("categorias.id"))
     
     aceitou_taxa = Column(Boolean, default=True)

@@ -28,7 +28,7 @@ def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db
 
 @app.get("/cadastro")
 def form_cadastro(request: Request, db: Session = Depends(get_db)):
-    categorias = db.query(models.Categoria).order_by(models.Categoria.nome).all()
+    categorias = db.query(models.Categoria).all()
     return templates.TemplateResponse("cadastro.html", {"request": request, "categorias": categorias})
 
 @app.post("/cadastrar")
@@ -50,6 +50,10 @@ def salvar_cadastro(
     db.add(novo_profissional)
     db.commit()
     return RedirectResponse(url="/", status_code=303)
+
+@app.get("/contato")
+def pagina_contato(request: Request):
+    return templates.TemplateResponse("contato.html", {"request": request})
 
 # --- ÁREA DO ADMIN ---
 @app.get("/admin")
@@ -76,7 +80,7 @@ def deletar_profissional(prof_id: int, db: Session = Depends(get_db)):
 @app.get("/admin/editar/{prof_id}")
 def form_editar(prof_id: int, request: Request, db: Session = Depends(get_db)):
     prof = db.query(models.Profissional).filter(models.Profissional.id == prof_id).first()
-    categorias = db.query(models.Categoria).order_by(models.Categoria.nome).all()
+    categorias = db.query(models.Categoria).all()
     return templates.TemplateResponse("editar.html", {"request": request, "profissional": prof, "categorias": categorias})
 
 @app.post("/admin/editar/{prof_id}")
