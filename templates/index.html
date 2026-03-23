@@ -7,32 +7,37 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background-color: #FDF5E6; font-family: 'Segoe UI', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
-        .hero-section { padding: 60px 0 40px 0; text-align: center; }
-        .texto-barro { color: #C84B31; }
+        .bg-barro { background-color: #C84B31; color: white; }
         .btn-sol { background-color: #F9A825; color: #333; font-weight: bold; border: none; padding: 12px 30px; }
-        .btn-sol:hover { background-color: #F57F17; }
         .search-container { max-width: 600px; margin: 0 auto; }
         .input-busca { border-radius: 30px 0 0 30px; border: 1px solid #ddd; padding-left: 25px; }
         .btn-busca { border-radius: 0 30px 30px 0; }
-        .card-custom { border-left: 5px solid #F9A825 !important; border-radius: 12px; transition: 0.3s; background: white; }
+        .card-custom { border-left: 5px solid #F9A825 !important; border-radius: 12px; background: white; }
         .rodape-nordeste { background-color: #EEDCC6; color: #5D4037; border-top: 2px solid #C84B31; margin-top: auto; }
+        .texto-barro { color: #C84B31; }
         .btn-mandacaru { background-color: #2E8B57; color: white; border-radius: 20px; font-weight: bold; text-decoration: none; padding: 8px 20px; }
     </style>
 </head>
 <body>
-    <header class="py-3 px-4 d-flex justify-content-between align-items-center">
-        <h1 class="h6 mb-0 fw-bold texto-barro">📍 Perto de Casa SE</h1>
+    <header class="py-3 px-4 d-flex justify-content-between align-items-center bg-barro shadow-sm">
+        <h1 class="h6 mb-0 fw-bold text-white">📍 Perto de Casa SE</h1>
         <div>
-            <a href="/contato" class="texto-barro text-decoration-none small fw-bold me-3">Fale Conosco</a>
-            <a href="/cadastro" class="btn-mandacaru small">Anunciar</a>
+            <a href="/contato" class="text-white text-decoration-none small fw-bold me-3">Fale Conosco</a>
+            <a href="/cadastro" class="btn btn-light btn-sm fw-bold rounded-pill text-dark">Anunciar</a>
         </div>
     </header>
 
-    <div class="container content">
-        <div class="hero-section">
+    <div class="container content py-4">
+        
+        {% if mensagem_sucesso %}
+        <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4 mx-auto" role="alert" style="max-width: 600px; border-radius: 12px;">
+            <strong>🎉 Sucesso!</strong> {{ mensagem_sucesso }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+
+        <div class="text-center mb-5">
             <h2 class="display-6 fw-bold texto-barro mb-3">O que você procura hoje?</h2>
-            <p class="text-muted">Encontre profissionais de confiança em Sergipe</p>
-            
             <div class="search-container mt-4">
                 <form action="/" method="GET">
                     <div class="input-group shadow-sm">
@@ -43,11 +48,9 @@
             </div>
         </div>
 
-        <div class="results-container pb-5" style="max-width: 700px; margin: 0 auto;">
+        <div class="results-container pb-5 mx-auto" style="max-width: 700px;">
             {% if buscou %}
-                <hr class="mb-4">
                 <h3 class="h5 mb-4 text-muted text-center">Resultados para "{{ termo_busca }}"</h3>
-                
                 {% if profissionais %}
                     {% for prof in profissionais %}
                     <div class="card shadow-sm border-0 card-custom mb-3">
@@ -56,15 +59,12 @@
                             <h6 class="card-subtitle mb-2 text-muted fw-bold small text-uppercase">{{ prof.categoria.nome }} | 📍 {{ prof.cidade }}</h6>
                             <p class="card-text small">{{ prof.descricao }}</p>
                             {% if prof.redes_sociais %}<p class="small text-muted mb-3">📱 {{ prof.redes_sociais }}</p>{% endif %}
-                            <a href="https://wa.me/55{{ prof.telefone | replace(' ', '') | replace('-', '') }}" target="_blank" class="btn btn-sm btn-mandacaru">💬 Chamar no WhatsApp</a>
+                            <a href="https://wa.me/55{{ prof.telefone | replace(' ', '') | replace('-', '') }}" target="_blank" class="btn btn-sm btn-mandacaru">💬 WhatsApp</a>
                         </div>
                     </div>
                     {% endfor %}
                 {% else %}
-                    <div class="text-center py-4">
-                        <p class="text-muted">Nenhum profissional encontrado com este termo.</p>
-                        <a href="/" class="btn btn-link texto-barro">Limpar busca</a>
-                    </div>
+                    <p class="text-center text-muted">Nenhum profissional encontrado.</p>
                 {% endif %}
             {% endif %}
         </div>
@@ -73,5 +73,7 @@
     <footer class="text-center py-4 rodape-nordeste">
         <p class="mb-0 small fw-bold">Feito no Nordeste 🌵 Desenvolvido por <span class="texto-barro">Caju Valley Tecnologia</span></p>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
