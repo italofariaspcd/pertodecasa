@@ -19,6 +19,6 @@ class Profissional(Base):
     
     # Controle da taxa de R$ 20,00
     aceitou_taxa = Column(Boolean, default=True)
-    ativo = Column(Boolean, default=True) # Se for False, some das buscas
+    ativo = Column(Boolean, default=True) 
 
     categoria = relationship("Categoria", back_populates="profissionais")

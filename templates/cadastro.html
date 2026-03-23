@@ -5,34 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - Perto de Casa Sergipe</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #FDF5E6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+        .bg-terracota { background-color: #B7410E; }
+        .btn-verde { background-color: #2E7D32; color: white; transition: 0.3s;}
+        .btn-verde:hover { background-color: #1b5e20; color: white; }
+    </style>
 </head>
-<body class="bg-light">
-    <div class="container mt-5" style="max-width: 600px;">
-        <div class="card shadow-sm">
-            <div class="card-header text-white" style="background-color: #B7410E;">
-                <h3 class="mb-0 text-center">Cadastrar Serviço</h3>
+<body>
+    <div class="container mt-5 mb-5" style="max-width: 600px;">
+        <div class="card shadow border-0" style="border-radius: 12px; overflow: hidden;">
+            <div class="card-header text-white bg-terracota py-3">
+                <h3 class="mb-0 text-center fw-bold">Cadastrar Serviço</h3>
             </div>
-            <div class="card-body">
+            <div class="card-body p-4 bg-white">
                 <form action="/cadastrar" method="POST">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Nome do Profissional ou Empresa</label>
-                        <input type="text" class="form-control" name="nome" required>
+                        <input type="text" class="form-control bg-light" name="nome" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">WhatsApp (com DDD)</label>
-                        <input type="text" class="form-control" name="telefone" placeholder="Ex: 79999999999" required>
+                        <input type="text" class="form-control bg-light" name="telefone" placeholder="Ex: 79999999999" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">Cidade</label>
-                        <input type="text" class="form-control" name="cidade" value="Capela" required>
+                        <input type="text" class="form-control bg-light" name="cidade" value="Capela" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">Categoria</label>
-                        <select class="form-select" name="categoria_id" required>
-                            <option value="">Selecione...</option>
+                        <select class="form-select bg-light" name="categoria_id" required>
+                            <option value="">Selecione a sua área...</option>
                             {% for cat in categorias %}
                             <option value="{{ cat.id }}">{{ cat.nome }}</option>
                             {% endfor %}
@@ -41,19 +47,23 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">Descrição do Serviço</label>
-                        <textarea class="form-control" name="descricao" rows="3" required></textarea>
+                        <textarea class="form-control bg-light" name="descricao" rows="3" placeholder="Conte um pouco sobre o que você faz e seus diferenciais..." required></textarea>
                     </div>
 
-                    <div class="alert alert-warning">
+                    <div class="alert mb-4 shadow-sm border-0" style="background-color: #fff3cd; color: #856404; border-left: 5px solid #ffeeba !important;">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="taxaMensal" name="taxaMensal" required value="true">
-                            <label class="form-check-label" for="taxaMensal" style="font-size: 0.9em;">
-                                Estou ciente e concordo que há uma taxa de manutenção de <strong>R$ 20,00 mensais</strong>. Caso o pagamento não seja feito, meu perfil será ocultado das buscas.
+                            <label class="form-check-label" for="taxaMensal" style="font-size: 0.95em;">
+                                Estou ciente e concordo que há uma taxa de manutenção de <strong>R$ 20,00 mensais</strong>. Entendo que, caso o pagamento não seja feito, meu perfil será ocultado das buscas.
                             </label>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-success w-100 fw-bold" style="background-color: #2E7D32;">Finalizar Cadastro</button>
+                    <button type="submit" class="btn btn-verde w-100 fw-bold py-3 fs-5" style="border-radius: 8px;">Finalizar Cadastro</button>
+                    
+                    <div class="text-center mt-4">
+                        <a href="/" class="text-muted text-decoration-none fw-bold">← Voltar para a página inicial</a>
+                    </div>
                 </form>
             </div>
         </div>

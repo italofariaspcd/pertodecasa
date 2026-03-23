@@ -5,30 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perto de Casa - Sergipe</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #FDF5E6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        header { background-color: #B7410E; }
+        .btn-verde { background-color: #2E7D32; color: white; transition: 0.3s; }
+        .btn-verde:hover { background-color: #1b5e20; color: white; }
+        .btn-amarelo { background-color: #FFB300; color: #333; transition: 0.3s; }
+        .btn-amarelo:hover { background-color: #FF8F00; color: #333; }
+        .card-custom { border-left: 6px solid #FFB300 !important; border-radius: 10px; }
+        .texto-terracota { color: #B7410E; }
+    </style>
 </head>
-<body style="background-color: #FDF5E6;">
+<body>
     
-    <header class="text-white text-center py-4" style="background-color: #B7410E;">
-        <h1>📍 Perto de Casa Sergipe</h1>
-        <p class="mb-0">Encontre os melhores profissionais na sua região!</p>
+    <header class="text-white text-center py-4 shadow-sm">
+        <h1 class="fw-bold">📍 Perto de Casa Sergipe</h1>
+        <p class="mb-0 fs-5">Encontre os melhores profissionais na sua região!</p>
     </header>
 
     <div class="container mt-4" style="max-width: 800px;">
+        
+        <form action="/" method="GET" class="mb-4">
+            <div class="input-group shadow-sm">
+                <input type="text" name="q" class="form-control form-control-lg border-0" 
+                       placeholder="Buscar por nome, serviço ou cidade..." 
+                       value="{{ termo_busca or '' }}">
+                <button type="submit" class="btn btn-amarelo fw-bold px-4 fs-5">🔍 Buscar</button>
+                {% if termo_busca %}
+                <a href="/" class="btn btn-outline-secondary px-3 d-flex align-items-center">Limpar</a>
+                {% endif %}
+            </div>
+        </form>
+
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="h4" style="color: #333;">Profissionais Disponíveis</h2>
-            <a href="/cadastro" class="btn text-white fw-bold" style="background-color: #2E7D32;">➕ Anunciar Serviço</a>
+            <h2 class="h4 mb-0 fw-bold" style="color: #333;">Profissionais Disponíveis</h2>
+            <a href="/cadastro" class="btn btn-verde fw-bold">➕ Anunciar Serviço</a>
         </div>
 
         <div class="row">
             {% if profissionais %}
                 {% for prof in profissionais %}
                 <div class="col-12 mb-3">
-                    <div class="card shadow-sm border-0" style="border-left: 5px solid #FF8C00 !important;">
+                    <div class="card shadow-sm border-0 card-custom">
                         <div class="card-body">
-                            <h5 class="card-title fw-bold" style="color: #B7410E;">{{ prof.nome }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">{{ prof.categoria.nome }} | 📍 {{ prof.cidade }}</h6>
-                            <p class="card-text">{{ prof.descricao }}</p>
-                            <a href="https://wa.me/55{{ prof.telefone | replace(' ', '') | replace('-', '') }}" target="_blank" class="btn btn-sm text-white fw-bold" style="background-color: #2E7D32;">
+                            <h5 class="card-title fw-bold texto-terracota">{{ prof.nome }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted fw-bold">{{ prof.categoria.nome }} | 📍 {{ prof.cidade }}</h6>
+                            <p class="card-text mt-2">{{ prof.descricao }}</p>
+                            <a href="https://wa.me/55{{ prof.telefone | replace(' ', '') | replace('-', '') }}" target="_blank" class="btn btn-sm btn-verde fw-bold">
                                 📱 Chamar no WhatsApp
                             </a>
                         </div>
@@ -37,8 +60,13 @@
                 {% endfor %}
             {% else %}
                 <div class="col-12">
-                    <div class="alert alert-secondary text-center">
-                        Nenhum profissional cadastrado ou ativo no momento. Seja o primeiro!
+                    <div class="alert text-center shadow-sm" style="background-color: #fff; border: 1px solid #e0d4c3; color: #665b4c;">
+                        {% if termo_busca %}
+                            Nenhum profissional encontrado para "<strong>{{ termo_busca }}</strong>".
+                        {% else %}
+                            <h5 class="fw-bold mb-2">Ainda não temos profissionais cadastrados.</h5>
+                            <p class="mb-0">Clique em <strong>"Anunciar Serviço"</strong> e seja o primeiro a aparecer em destaque!</p>
+                        {% endif %}
                     </div>
                 </div>
             {% endif %}

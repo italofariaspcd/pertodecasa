@@ -2,6 +2,8 @@ from fastapi import FastAPI, Depends, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
+from typing import Optional
 import models
 from database import engine, get_db
 
@@ -11,10 +13,24 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
-def home(request: Request, db: Session = Depends(get_db)):
-    # Só exibe profissionais ativos
-    profissionais = db.query(models.Profissional).filter(models.Profissional.ativo == True).all()
-    return templates.TemplateResponse("index.html", {"request": request, "profissionais": profissionais})
+def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db)):
+    query = db.query(models.Profissional).filter(models.Profissional.ativo == True)
+    
+    if q:
+        query = query.filter(
+            or_(
+                models.Profissional.nome.ilike(f"%{q}%"),
+                models.Profissional.descricao.ilike(f"%{q}%"),
+                models.Profissional.cidade.ilike(f"%{q}%")
+            )
+        )
+        
+    profissionais = query.all()
+    return templates.TemplateResponse("index.html", {
+        "request": request, 
+        "profissionais": profissionais,
+        "termo_busca": q
+    })
 
 @app.get("/cadastro")
 def form_cadastro(request: Request, db: Session = Depends(get_db)):
@@ -44,9 +60,7 @@ def salvar_cadastro(
     db.commit()
     return RedirectResponse(url="/", status_code=303)
 
-# ==========================================
-# ÁREA DO ADMINISTRADOR
-# ==========================================
+# --- ÁREA DO ADMIN ---
 @app.get("/admin")
 def painel_admin(request: Request, db: Session = Depends(get_db)):
     profissionais = db.query(models.Profissional).all()
