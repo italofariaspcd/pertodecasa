@@ -1,5 +1,5 @@
 from database import engine, SessionLocal, Base
-from models import Category
+from models import Categoria
 
 # Garante que as tabelas existem
 Base.metadata.create_all(bind=engine)
@@ -117,9 +117,9 @@ adicionadas = 0
 
 for cat in categorias:
     # O script é inteligente: só adiciona se a categoria ainda não existir no banco
-    existe = db.query(Category).filter_by(slug=cat["slug"]).first()
+    existe = db.query(Categoria).filter_by(slug=cat["slug"]).first()
     if not existe:
-        nova_cat = Category(name=cat["name"], slug=cat["slug"])
+        nova_cat = Categoria(name=cat["name"], slug=cat["slug"])
         db.add(nova_cat)
         adicionadas += 1
 
