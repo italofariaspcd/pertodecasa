@@ -5,39 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perto de Casa SE</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌵</text></svg>">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root { --barro: #C84B31; --mandacaru: #2E8B57; --sol: #F9A825; --areia: #FDF5E6; }
         body { background-color: var(--areia); font-family: 'Segoe UI', system-ui, sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
-        .navbar-custom { background-color: var(--barro); padding: 12px 0; }
-        .btn-anunciar { background-color: white; color: var(--barro); border-radius: 50px; font-weight: bold; padding: 6px 18px; border: none; font-size: 0.9rem; }
-        .hero { padding: 50px 20px 30px; text-align: center; }
-        .insta-link { color: var(--sol); text-decoration: none; font-weight: bold; font-size: 0.9rem; }
+        header { background-color: var(--barro); padding: 10px 0; }
+        .btn-header { font-weight: bold; border-radius: 50px; font-size: 0.85rem; padding: 6px 15px; }
+        .hero { padding: 40px 20px 20px; text-align: center; }
         .search-box { background: white; border-radius: 50px; padding: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .input-busca { border: none !important; box-shadow: none !important; padding-left: 20px; font-size: 1.1rem; }
+        .input-busca { border: none !important; box-shadow: none !important; padding-left: 20px; }
         .btn-busca { background-color: var(--sol); border-radius: 50px; color: #333; font-weight: bold; padding: 10px 25px; border: none; }
         .card-prof { border: none; border-radius: 15px; border-left: 6px solid var(--sol); margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
         .btn-whats { background-color: var(--mandacaru); color: white; border-radius: 50px; font-weight: bold; width: 100%; margin-top: 10px; }
-        .rodape-nordeste { background-color: #EEDCC6; color: #5D4037; border-top: 2px solid var(--barro); margin-top: auto; padding: 25px 0; }
-        @media (max-width: 576px) { .display-6 { font-size: 1.8rem; } .hero { padding: 30px 15px; } }
+        .rodape-nordeste { background-color: #EEDCC6; color: #5D4037; border-top: 2px solid var(--barro); margin-top: auto; padding: 25px 0; text-align: center; }
     </style>
 </head>
 <body>
-    <nav class="navbar-custom shadow-sm sticky-top">
+    <header class="shadow-sm sticky-top text-white">
         <div class="container d-flex justify-content-between align-items-center px-3">
             <a href="/" class="text-white text-decoration-none fw-bold mb-0">📍 Perto de Casa SE</a>
-            <a href="/cadastro" class="btn-anunciar">ANUNCIAR</a>
+            <div class="d-flex gap-2">
+                <a href="/contato" class="btn btn-outline-light btn-header">Fale Conosco</a>
+                <a href="/cadastro" class="btn btn-light btn-header text-dark">Anunciar</a>
+            </div>
         </div>
-    </nav>
+    </header>
 
-    <div class="container">
+    <div class="container content flex-grow-1">
         <div class="hero">
-            <a href="https://instagram.com/pertodecasase" target="_blank" class="insta-link mb-2 d-block">📸 @pertodecasase</a>
-            <h2 class="display-6 fw-bold mb-4" style="color: var(--barro);">Encontre o que precisa em Sergipe</h2>
-            
-            <div class="search-box mx-auto mt-2" style="max-width: 600px;">
+            <h2 class="display-6 fw-bold mb-4" style="color: var(--barro);">O que você procura hoje?</h2>
+            <div class="search-box mx-auto" style="max-width: 600px;">
                 <form action="/" method="GET" class="d-flex">
-                    <input type="text" name="q" class="form-control input-busca" placeholder="Ex: Eletricista, Pedreiro, Capela..." value="{{ termo_busca or '' }}" required>
+                    <input type="text" name="q" class="form-control input-busca" placeholder="Eletricista, Pedreiro, Capela..." value="{{ termo_busca or '' }}" required>
                     <button type="submit" class="btn btn-busca">BUSCAR</button>
                 </form>
             </div>
@@ -56,30 +56,27 @@
                 {% for prof in profissionais %}
                 <div class="card card-prof p-2">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h5 class="fw-bold mb-1" style="color: var(--barro);">{{ prof.nome }}</h5>
-                                <span class="badge bg-light text-dark mb-2">{{ prof.categoria.nome }}</span>
-                            </div>
+                        <div class="d-flex justify-content-between">
+                            <h5 class="fw-bold mb-1" style="color: var(--barro);">{{ prof.nome }}</h5>
                             <small class="text-muted fw-bold">📍 {{ prof.cidade }}</small>
                         </div>
+                        <span class="badge bg-light text-dark mb-2">{{ prof.categoria.nome }}</span>
                         <p class="small text-secondary mb-3">{{ prof.descricao }}</p>
                         {% if prof.redes_sociais %}<p class="small mb-2">📸 <strong>Social:</strong> {{ prof.redes_sociais }}</p>{% endif %}
-                        <a href="https://wa.me/55{{ prof.telefone | replace(' ', '') | replace('-', '') }}" target="_blank" class="btn btn-whats py-2">📱 Chamar no WhatsApp</a>
+                        <a href="https://wa.me/55{{ prof.telefone | replace(' ', '') | replace('-', '') }}" target="_blank" class="btn btn-whats py-2">📱 WhatsApp</a>
                     </div>
                 </div>
                 {% endfor %}
                 {% if not profissionais %}
-                    <div class="text-center py-4 text-muted small">Nenhum profissional encontrado com esse nome.</div>
+                    <div class="text-center py-4 text-muted small">Nenhum profissional encontrado.</div>
                 {% endif %}
             {% endif %}
         </div>
     </div>
 
-    <footer class="text-center rodape-nordeste">
+    <footer class="rodape-nordeste">
         <p class="mb-1 small fw-bold">Feito no Nordeste 🌵</p>
-        <p class="mb-0 small">Desenvolvido por <strong style="color: var(--barro);">Caju Valley Tecnologia</strong></p>
-        <div class="mt-3"><a href="/contato" class="text-decoration-none small fw-bold text-muted">✉️ Fale Conosco</a></div>
+        <p class="mb-0 small">Desenvolvido por <strong style="color: var(--barro);">Caju Valley Tecnologia</strong> @pertodecasase</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

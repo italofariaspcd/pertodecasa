@@ -12,7 +12,7 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 # Middleware para mensagens de sucesso e sessões
-app.add_middleware(SessionMiddleware, secret_key="caju-valley-nordeste-2026")
+app.add_middleware(SessionMiddleware, secret_key="caju-valley-nordeste-2026-secreto")
 
 templates = Jinja2Templates(directory="templates")
 
