@@ -11,8 +11,8 @@ from database import engine, get_db
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
-# Middleware para que a mensagem de "Cadastro com Sucesso" funcione entre páginas
-app.add_middleware(SessionMiddleware, secret_key="caju-valley-key-123-secreto")
+# Mantém a mensagem de "Sucesso" viva entre o cadastro e a home
+app.add_middleware(SessionMiddleware, secret_key="caju-valley-tecnologia-secreta")
 
 templates = Jinja2Templates(directory="templates")
 
@@ -20,7 +20,7 @@ templates = Jinja2Templates(directory="templates")
 def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db)):
     profissionais = []
     buscou = False
-    # Recupera a mensagem de sucesso se ela existir na sessão
+    # Pega a mensagem de sucesso da sessão (se houver) e limpa em seguida
     sucesso = request.session.pop("mensagem_sucesso", None)
     
     if q and q.strip() != "":
@@ -58,19 +58,14 @@ def salvar_cadastro(
     redes_sociais: Optional[str] = Form(""),
     db: Session = Depends(get_db)
 ):
-    novo_profissional = models.Profissional(
-        nome=nome, 
-        telefone=telefone, 
-        cidade=cidade, 
-        descricao=descricao,
-        categoria_id=categoria_id, 
-        redes_sociais=redes_sociais,
-        aceitou_taxa=taxaMensal, 
-        ativo=True 
+    novo = models.Profissional(
+        nome=nome, telefone=telefone, cidade=cidade, descricao=descricao,
+        categoria_id=categoria_id, redes_sociais=redes_sociais,
+        aceitou_taxa=taxaMensal, ativo=True 
     )
-    db.add(novo_profissional)
+    db.add(novo)
     db.commit()
-    # Define o aviso para a tela inicial
+    # Salva o aviso para ser exibido na Home
     request.session["mensagem_sucesso"] = "Cadastro realizado com sucesso!"
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
@@ -78,7 +73,7 @@ def salvar_cadastro(
 def pagina_contato(request: Request):
     return templates.TemplateResponse("contato.html", {"request": request})
 
-# --- ÁREA ADMINISTRATIVA ---
+# --- ADMINISTRAÇÃO ---
 
 @app.get("/admin")
 def painel_admin(request: Request, db: Session = Depends(get_db)):
