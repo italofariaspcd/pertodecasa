@@ -31,6 +31,10 @@
         
         .btn-social { border: 1px solid #ccc; color: #555; border-radius: 50px; padding: 6px 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; font-size: 0.85rem; transition: 0.2s;}
         .btn-social:hover { background-color: #f0f0f0; color: #333; }
+
+        /* MUDANÇA AQUI: Criamos classes CSS ao invés de usar style="..." para não bugar o VS Code */
+        .bg-avatar-vip { background-color: #FFD700; }
+        .bg-avatar-normal { background-color: #FFF3E0; }
     </style>
 </head>
 <body>
@@ -61,15 +65,12 @@
                 <div class="row g-3 align-items-end">
                     <div class="col-md-5">
                         <label class="form-label text-muted small fw-bold">O QUE VOCÊ BUSCA?</label>
-                        
                         <input type="text" name="servico" list="lista-categorias" class="form-control form-control-lg border-0 bg-light" placeholder="Ex: Eletricista, Diarista..." value="{{ servico_buscado }}" autocomplete="off">
-                        
                         <datalist id="lista-categorias">
                             {% for cat in categorias %}
                                 <option value="{{ cat.name }}">
                             {% endfor %}
                         </datalist>
-
                     </div>
                     <div class="col-md-5">
                         <label class="form-label text-muted small fw-bold">BAIRRO OU CIDADE</label>
@@ -92,12 +93,13 @@
                     <div class="col-md-6 col-lg-4">
                         <div class="card h-100 p-3 {% if p.is_vip %}card-vip{% else %}card-profissional{% endif %}">
                             <div class="d-flex align-items-center gap-3 mb-3">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center" 
-                                     style="width: 50px; height: 50px; background-color: {% if p.is_vip %}#FFD700{% else %}#FFF3E0{% endif %};">
+                                
+                                <div class="rounded-circle d-flex align-items-center justify-content-center {% if p.is_vip %}bg-avatar-vip{% else %}bg-avatar-normal{% endif %}" style="width: 50px; height: 50px;">
                                     <span class="material-icons" style="font-size: 2rem; color: var(--cor-terracota);">
                                         {% if p.is_vip %}stars{% else %}person{% endif %}
                                     </span>
                                 </div>
+                                
                                 <div>
                                     <h5 class="mb-0 fw-bold" style="color: #3E2723;">
                                         {{ p.full_name }}
