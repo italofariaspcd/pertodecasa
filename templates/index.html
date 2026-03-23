@@ -6,80 +6,72 @@
     <title>Perto de Casa SE</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #FDF5E6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; min-height: 100vh;}
-        .bg-barro { background-color: #C84B31; color: white; }
-        .btn-mandacaru { background-color: #2E8B57; color: white; transition: 0.3s; }
-        .btn-mandacaru:hover { background-color: #1e633d; color: white; }
-        .btn-sol { background-color: #F9A825; color: #333; transition: 0.3s; border: none; }
-        .btn-sol:hover { background-color: #F57F17; color: #333; }
-        .card-custom { border-left: 5px solid #F9A825 !important; border-radius: 8px; }
+        body { background-color: #FDF5E6; font-family: 'Segoe UI', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+        .hero-section { padding: 60px 0 40px 0; text-align: center; }
         .texto-barro { color: #C84B31; }
-        .content { flex: 1; }
-        .rodape-nordeste { background-color: #EEDCC6; color: #5D4037; border-top: 2px solid #C84B31; }
+        .btn-sol { background-color: #F9A825; color: #333; font-weight: bold; border: none; padding: 12px 30px; }
+        .btn-sol:hover { background-color: #F57F17; }
+        .search-container { max-width: 600px; margin: 0 auto; }
+        .input-busca { border-radius: 30px 0 0 30px; border: 1px solid #ddd; padding-left: 25px; }
+        .btn-busca { border-radius: 0 30px 30px 0; }
+        .card-custom { border-left: 5px solid #F9A825 !important; border-radius: 12px; transition: 0.3s; background: white; }
+        .rodape-nordeste { background-color: #EEDCC6; color: #5D4037; border-top: 2px solid #C84B31; margin-top: auto; }
+        .btn-mandacaru { background-color: #2E8B57; color: white; border-radius: 20px; font-weight: bold; text-decoration: none; padding: 8px 20px; }
     </style>
 </head>
 <body>
-    
-    <header class="py-3 shadow-sm bg-barro">
-        <div class="container d-flex justify-content-between align-items-center" style="max-width: 800px;">
-            <h1 class="h5 mb-0 fw-bold">📍 Perto de Casa SE</h1>
-            <a href="/contato" class="text-white text-decoration-none small fw-bold">✉️ Fale Conosco</a>
+    <header class="py-3 px-4 d-flex justify-content-between align-items-center">
+        <h1 class="h6 mb-0 fw-bold texto-barro">📍 Perto de Casa SE</h1>
+        <div>
+            <a href="/contato" class="texto-barro text-decoration-none small fw-bold me-3">Fale Conosco</a>
+            <a href="/cadastro" class="btn-mandacaru small">Anunciar</a>
         </div>
     </header>
 
-    <div class="container mt-4 content" style="max-width: 800px;">
-        
-        <form action="/" method="GET" class="mb-4">
-            <div class="input-group shadow-sm">
-                <input type="text" name="q" class="form-control border-0 py-2" placeholder="Buscar por serviço, nome ou cidade..." value="{{ termo_busca or '' }}">
-                <button type="submit" class="btn btn-sol fw-bold px-4">🔍 Buscar</button>
-                {% if termo_busca %}
-                <a href="/" class="btn btn-outline-secondary px-3 d-flex align-items-center bg-white">Limpar</a>
-                {% endif %}
+    <div class="container content">
+        <div class="hero-section">
+            <h2 class="display-6 fw-bold texto-barro mb-3">O que você procura hoje?</h2>
+            <p class="text-muted">Encontre profissionais de confiança em Sergipe</p>
+            
+            <div class="search-container mt-4">
+                <form action="/" method="GET">
+                    <div class="input-group shadow-sm">
+                        <input type="text" name="q" class="form-control form-control-lg input-busca" placeholder="Ex: Pedreiro, Diarista, Capela..." value="{{ termo_busca or '' }}" required>
+                        <button type="submit" class="btn btn-sol btn-busca">BUSCAR</button>
+                    </div>
+                </form>
             </div>
-        </form>
-
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="h5 mb-0 fw-bold" style="color: #5D4037;">Profissionais Disponíveis</h2>
-            <a href="/cadastro" class="btn btn-mandacaru btn-sm fw-bold px-3 py-2 rounded-pill">➕ Anunciar Serviço</a>
         </div>
 
-        <div class="row">
-            {% if profissionais %}
-                {% for prof in profissionais %}
-                <div class="col-12 mb-3">
-                    <div class="card shadow-sm border-0 card-custom">
+        <div class="results-container pb-5" style="max-width: 700px; margin: 0 auto;">
+            {% if buscou %}
+                <hr class="mb-4">
+                <h3 class="h5 mb-4 text-muted text-center">Resultados para "{{ termo_busca }}"</h3>
+                
+                {% if profissionais %}
+                    {% for prof in profissionais %}
+                    <div class="card shadow-sm border-0 card-custom mb-3">
                         <div class="card-body">
                             <h5 class="card-title fw-bold texto-barro">{{ prof.nome }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted fw-bold">{{ prof.categoria.nome }} | 📍 {{ prof.cidade }}</h6>
-                            <p class="card-text mt-2 mb-2">{{ prof.descricao }}</p>
-                            
-                            {% if prof.redes_sociais %}
-                            <p class="small text-muted mb-3">📱 <strong>Redes Sociais:</strong> {{ prof.redes_sociais }}</p>
-                            {% endif %}
-
-                            <a href="https://wa.me/55{{ prof.telefone | replace(' ', '') | replace('-', '') }}" target="_blank" class="btn btn-sm btn-mandacaru fw-bold">
-                                💬 Chamar no WhatsApp
-                            </a>
+                            <h6 class="card-subtitle mb-2 text-muted fw-bold small text-uppercase">{{ prof.categoria.nome }} | 📍 {{ prof.cidade }}</h6>
+                            <p class="card-text small">{{ prof.descricao }}</p>
+                            {% if prof.redes_sociais %}<p class="small text-muted mb-3">📱 {{ prof.redes_sociais }}</p>{% endif %}
+                            <a href="https://wa.me/55{{ prof.telefone | replace(' ', '') | replace('-', '') }}" target="_blank" class="btn btn-sm btn-mandacaru">💬 Chamar no WhatsApp</a>
                         </div>
                     </div>
-                </div>
-                {% endfor %}
-            {% else %}
-                <div class="col-12">
-                    <div class="alert text-center shadow-sm bg-white" style="border: 1px solid #EEDCC6;">
-                        <p class="mb-0 text-muted">Nenhum profissional encontrado no momento. Seja o primeiro a anunciar!</p>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <p class="text-muted">Nenhum profissional encontrado com este termo.</p>
+                        <a href="/" class="btn btn-link texto-barro">Limpar busca</a>
                     </div>
-                </div>
+                {% endif %}
             {% endif %}
         </div>
     </div>
 
-    <footer class="text-center py-4 mt-4 rodape-nordeste">
-        <p class="mb-0 small fw-bold">
-            Feito no Nordeste 🌵 Desenvolvido por <span class="texto-barro">Caju Valley Tecnologia</span>
-        </p>
+    <footer class="text-center py-4 rodape-nordeste">
+        <p class="mb-0 small fw-bold">Feito no Nordeste 🌵 Desenvolvido por <span class="texto-barro">Caju Valley Tecnologia</span></p>
     </footer>
-
 </body>
 </html>
