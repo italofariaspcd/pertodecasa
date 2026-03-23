@@ -11,8 +11,8 @@ from database import engine, get_db
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
-# Mantém a mensagem de "Sucesso" viva entre o cadastro e a home
-app.add_middleware(SessionMiddleware, secret_key="caju-valley-tecnologia-secreta")
+# Middleware para mensagens de sucesso e sessões
+app.add_middleware(SessionMiddleware, secret_key="caju-valley-nordeste-2026")
 
 templates = Jinja2Templates(directory="templates")
 
@@ -20,7 +20,6 @@ templates = Jinja2Templates(directory="templates")
 def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db)):
     profissionais = []
     buscou = False
-    # Pega a mensagem de sucesso da sessão (se houver) e limpa em seguida
     sucesso = request.session.pop("mensagem_sucesso", None)
     
     if q and q.strip() != "":
@@ -49,13 +48,9 @@ def form_cadastro(request: Request, db: Session = Depends(get_db)):
 @app.post("/cadastrar")
 def salvar_cadastro(
     request: Request,
-    nome: str = Form(...), 
-    telefone: str = Form(...), 
-    cidade: str = Form(...),
-    descricao: str = Form(...), 
-    categoria_id: int = Form(...),
-    taxaMensal: bool = Form(...), 
-    redes_sociais: Optional[str] = Form(""),
+    nome: str = Form(...), telefone: str = Form(...), cidade: str = Form(...),
+    descricao: str = Form(...), categoria_id: int = Form(...),
+    taxaMensal: bool = Form(...), redes_sociais: Optional[str] = Form(""),
     db: Session = Depends(get_db)
 ):
     novo = models.Profissional(
@@ -65,7 +60,6 @@ def salvar_cadastro(
     )
     db.add(novo)
     db.commit()
-    # Salva o aviso para ser exibido na Home
     request.session["mensagem_sucesso"] = "Cadastro realizado com sucesso!"
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
@@ -74,7 +68,6 @@ def pagina_contato(request: Request):
     return templates.TemplateResponse("contato.html", {"request": request})
 
 # --- ADMINISTRAÇÃO ---
-
 @app.get("/admin")
 def painel_admin(request: Request, db: Session = Depends(get_db)):
     profissionais = db.query(models.Profissional).all()
@@ -105,21 +98,14 @@ def form_editar(prof_id: int, request: Request, db: Session = Depends(get_db)):
 @app.post("/admin/editar/{prof_id}")
 def salvar_edicao(
     prof_id: int,
-    nome: str = Form(...), 
-    telefone: str = Form(...),
-    cidade: str = Form(...), 
-    descricao: str = Form(...),
-    categoria_id: int = Form(...), 
+    nome: str = Form(...), telefone: str = Form(...), cidade: str = Form(...), 
+    descricao: str = Form(...), categoria_id: int = Form(...), 
     redes_sociais: Optional[str] = Form(""),
     db: Session = Depends(get_db)
 ):
     prof = db.query(models.Profissional).filter(models.Profissional.id == prof_id).first()
     if prof:
-        prof.nome = nome
-        prof.telefone = telefone
-        prof.cidade = cidade
-        prof.descricao = descricao
-        prof.categoria_id = categoria_id
-        prof.redes_sociais = redes_sociais
+        prof.nome, prof.telefone, prof.cidade = nome, telefone, cidade
+        prof.descricao, prof.categoria_id, prof.redes_sociais = descricao, categoria_id, redes_sociais
         db.commit()
     return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
