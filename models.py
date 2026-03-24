@@ -14,13 +14,11 @@ class Profissional(Base):
     nome = Column(String, index=True)
     telefone = Column(String)
     redes_sociais = Column(String, nullable=True)
-    endereco = Column(String) # Novo: Rua/Avenida
-    numero = Column(String)   # Novo: Número da casa/ponto
-    cidade = Column(String)   # Seleção por lista
+    endereco = Column(String)
+    numero = Column(String)
+    cidade = Column(String)
     descricao = Column(String)
     categoria_id = Column(Integer, ForeignKey("categorias.id"))
-    
-    aceitou_taxa = Column(Boolean, default=True)
     ativo = Column(Boolean, default=True) 
 
     categoria = relationship("Categoria", back_populates="profissionais")
