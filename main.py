@@ -10,10 +10,9 @@ from database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key="caju-valley-premium-2026")
+app.add_middleware(SessionMiddleware, secret_key="caju-valley-premium-sergipe-2026")
 templates = Jinja2Templates(directory="templates")
 
-# Todos os 75 Municípios de Sergipe
 CIDADES_SE = [
     "Amparo de São Francisco", "Aquidabã", "Aracaju", "Arauá", "Areia Branca", "Barra dos Coqueiros", 
     "Boquim", "Brejo Grande", "Campo do Brito", "Canhoba", "Canindé de São Francisco", "Capela", 
@@ -32,7 +31,7 @@ CIDADES_SE = [
 
 @app.get("/healthcheck")
 def healthcheck():
-    return {"status": "online", "monitor": "Caju Valley 🌵"}
+    return {"status": "online", "monitor": "Caju Valley Ativa 🌵"}
 
 @app.get("/")
 def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db)):
@@ -46,8 +45,7 @@ def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db
             or_(
                 models.Profissional.nome.ilike(f"%{q}%"),
                 models.Profissional.descricao.ilike(f"%{q}%"),
-                models.Profissional.cidade.ilike(f"%{q}%"),
-                models.Profissional.endereco.ilike(f"%{q}%")
+                models.Profissional.cidade.ilike(f"%{q}%")
             )
         ).all()
     return templates.TemplateResponse("index.html", {
@@ -77,7 +75,7 @@ def salvar_cadastro(
     )
     db.add(novo)
     db.commit()
-    request.session["mensagem_sucesso"] = "Cadastro realizado! Taxa de R$ 10,00 via WhatsApp."
+    request.session["mensagem_sucesso"] = "Cadastro realizado! Valor: R$ 10,00 mensais."
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 @app.get("/contato")

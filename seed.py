@@ -5,35 +5,30 @@ Base.metadata.create_all(bind=engine)
 
 def popular_categorias():
     db = SessionLocal()
-    # Lista massiva cobrindo Saúde, Técnica, Pessoais e Geral
-    cats = [
-        "Açougueiro", "Adestrador de Cães", "Advogado Cível", "Advogado Trabalhista", "Agente de Viagens", 
-        "Agrônomo", "Aluguel de Brinquedos", "Animador de Festas", "Antenista", "Arquiteto", 
-        "Assistência Técnica Celular", "Assistência Técnica TV", "Babá", "Banho e Tosa", "Barbeiro", 
-        "Borracheiro", "Buffet Infantil", "Cabeleireiro", "Caça Vazamento", "Carpinteiro", "Chaveiro", 
-        "Churrasqueiro", "Confeiteiro", "Conserto de Ar Condicionado", "Conserto de Fogão", 
-        "Conserto de Geladeira", "Conserto de Máquina de Lavar", "Contador", "Corretor de Imóveis", 
-        "Corretor de Seguros", "Costureira", "Cozinheira", "Cuidador de Idosos", "Decorador de Festas", 
-        "Dedetizador", "Dentista", "Depiladora", "Desentupidor", "Designer de Sobrancelhas", 
-        "Designer Gráfico", "Despachante", "Diarista", "DJ", "Doceira", "Eletricista Automotivo", 
-        "Eletricista Residencial", "Encanador", "Enfermeiro", "Engenheiro Civil", "Esteticista", 
-        "Estofador", "Faxineira", "Fisioterapeuta", "Fotógrafo", "Fretes", "Garçom", "Gesseiro", 
-        "Guia de Turismo", "Instalação de Câmeras", "Instrutor de Yoga", "Jardineiro", "Lava Jato", 
-        "Lavagem de Sofá", "Manicure", "Maquiadora", "Marceneiro", "Marido de Aluguel", "Massagista", 
-        "Mecânico de Autos", "Mecânico de Motos", "Mestre de Obras", "Montador de Móveis", "Motoboy", 
-        "Motorista Particular", "Nutricionista", "Passadeira", "Pedreiro", "Personal Trainer", 
-        "Pintor Automotivo", "Pintor Residencial", "Piscineiro", "Podólogo", "Professor de Inglês", 
-        "Professor de Matemática", "Professor Particular", "Psicólogo", "Salgadeira", "Sanfoneiro", 
-        "Sapateiro", "Serralheiro", "Social Media", "Soldador", "Tatuador", "Técnico de Informática", 
-        "Técnico em Refrigeração", "Terapeuta Holístico", "Topógrafo", "Transporte Escolar", 
-        "Veterinário", "Videomaker", "Vidraceiro", "Outros"
+    # Lista categorizada: Técnicos, Humanos, Saúde e Tecnológicos
+    lista = [
+        # TÉCNICOS/CONSTRUÇÃO
+        "Eletricista Residencial", "Encanador", "Pedreiro", "Pintor", "Gesseiro", "Marceneiro", 
+        "Serralheiro", "Mecânico de Autos", "Mecânico de Motos", "Técnico em Refrigeração", 
+        "Montador de Móveis", "Vidraceiro", "Jardineiro", "Piscineiro", "Calheiro",
+        # HUMANOS/SERVIÇOS
+        "Cabeleireiro(a)", "Manicure/Pedicure", "Barbeiro", "Maquiador(a)", "Esteticista", 
+        "Diarista", "Babá", "Cuidador de Idosos", "Cozinheiro(a)", "Confeiteiro(a)", 
+        "Salgadeiro(a)", "Garçom/Garçonete", "Segurança Particular", "Motorista Particular",
+        # SAÚDE
+        "Fisioterapeuta", "Psicólogo(a)", "Nutricionista", "Personal Trainer", "Enfermeiro(a)", 
+        "Dentista", "Fonoaudiólogo(a)", "Veterinário", "Terapeuta Holístico",
+        # TECNOLÓGICOS/DIGITAIS
+        "Desenvolvedor de Sites", "Técnico em Informática", "Social Media", "Designer Gráfico", 
+        "Gestor de Tráfego", "Editor de Vídeo", "Assistência Técnica Celular", "Fotógrafo(a)",
+        "E-commerce Specialist", "Suporte de TI", "Instalador de Câmeras/Alarmes"
     ]
-    # (A lista real no código terá os 200 itens, aqui resumi os principais para o exemplo)
     try:
-        for nome in sorted(cats):
+        for nome in sorted(lista):
             if not db.query(Categoria).filter_by(nome=nome).first():
                 db.add(Categoria(nome=nome))
         db.commit()
+        print("Categorias atualizadas com sucesso! 🌵")
     finally:
         db.close()
 
