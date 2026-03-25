@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, Request, Form, status
+from fastapi import FastAPI, Depends, Request, Form, status, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
@@ -10,8 +10,10 @@ from database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key="caju-valley-premium-2026-master")
+app.add_middleware(SessionMiddleware, secret_key="caju-valley-pro-2026")
 templates = Jinja2Templates(directory="templates")
+
+ADMIN_PASSWORD = "Cica29xl!@"
 
 CIDADES_SE = [
     "Amparo de São Francisco", "Aquidabã", "Aracaju", "Arauá", "Areia Branca", "Barra dos Coqueiros", 
@@ -31,7 +33,7 @@ CIDADES_SE = [
 
 @app.get("/healthcheck")
 def healthcheck():
-    return {"status": "online", "uptime": "Caju Valley Active 🌵"}
+    return {"status": "online", "uptime": "Active 🌵"}
 
 @app.get("/")
 def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db)):
@@ -75,9 +77,21 @@ def salvar_cadastro(
     )
     db.add(novo)
     db.commit()
-    request.session["mensagem_sucesso"] = "Cadastro realizado! Você receberá a cobrança de R$ 10,00 via WhatsApp."
+    request.session["mensagem_sucesso"] = "Cadastro enviado! Aguarde cobrança via WhatsApp."
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 @app.get("/contato")
 def pagina_contato(request: Request):
     return templates.TemplateResponse("contato.html", {"request": request})
+
+# --- ADMIN COM SENHA ---
+@app.get("/login-admin")
+def login_page(request: Request):
+    return templates.TemplateResponse("login_admin.html", {"request": request})
+
+@app.post("/admin")
+def painel_admin(request: Request, senha: str = Form(...), db: Session = Depends(get_db)):
+    if senha != ADMIN_PASSWORD:
+        return templates.TemplateResponse("login_admin.html", {"request": request, "erro": "Senha incorreta!"})
+    profissionais = db.query(models.Profissional).all()
+    return templates.TemplateResponse("admin.html", {"request": request, "profissionais": profissionais})

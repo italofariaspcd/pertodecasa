@@ -7,22 +7,20 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌵</text></svg>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        :root { --barro: #C84B31; --sol: #F9A825; --areia: #FDF5E6; }
-        body { background-color: var(--areia); min-height: 100vh; font-size: 16px; }
-        .nav-premium { background-color: var(--barro); border-bottom: 4px solid var(--sol); padding: 12px 0; }
-        .card-cadastro { border-radius: 25px; border: none; box-shadow: 0 15px 45px rgba(0,0,0,0.1); margin-bottom: 40px; }
-        .form-label { font-weight: 700; color: var(--barro); margin-bottom: 8px; font-size: 0.95rem; }
-        .form-control, .form-select { border-radius: 12px; padding: 14px; border: 2px solid #eee; }
+        body { background-color: #FDF5E6; min-height: 100vh; font-size: 16px; }
+        .nav-premium { background-color: #C84B31; border-bottom: 4px solid #F9A825; padding: 12px 0; }
+        .card-cadastro { border-radius: 25px; border: none; box-shadow: 0 15px 45px rgba(0,0,0,0.1); margin-top: 20px; }
+        .form-label { font-weight: 700; color: #C84B31; margin-bottom: 8px; font-size: 0.95rem; }
+        .form-control, .form-select { border-radius: 12px; padding: 15px; border: 2px solid #eee; }
         .btn-salvar { background-color: #2E8B57; color: white; font-weight: bold; border-radius: 15px; padding: 18px; border: none; font-size: 1.1rem; width: 100%; }
         .alert-taxa { background-color: #FFF3E0; color: #E65100; border-radius: 15px; border: 2px solid #FFE0B2; padding: 20px; font-size: 0.9rem; }
-        .rodape { background-color: #EEDCC6; color: #5D4037; border-top: 2px solid var(--barro); padding: 30px 0; text-align: center; }
     </style>
 </head>
 <body>
     <nav class="nav-premium sticky-top shadow-sm">
         <div class="container d-flex justify-content-between align-items-center px-3">
-            <a href="/" class="text-white text-decoration-none fw-bold fs-5">📍 Perto de Casa SE</a>
-            <a href="/" class="btn btn-outline-light btn-sm rounded-pill px-3 fw-bold border-0">← Voltar ao Início</a>
+            <a href="/" class="text-white text-decoration-none fw-bold">📍 Perto de Casa SE</a>
+            <a href="/" class="btn btn-outline-light btn-sm rounded-pill px-3 fw-bold border-0">← Início</a>
         </div>
     </nav>
 
@@ -31,65 +29,42 @@
             <div class="col-12 col-lg-8">
                 <div class="card card-cadastro">
                     <div class="card-body p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-4 text-center" style="color: var(--barro);">Anunciar Serviço</h3>
-                        
+                        <h3 class="fw-bold mb-4 text-center" style="color: #C84B31;">Anunciar Meu Serviço</h3>
                         <form action="/cadastrar" method="POST">
-                            <div class="mb-4">
-                                <label class="form-label">NOME DA EMPRESA OU PRESTADOR</label>
-                                <input type="text" class="form-control shadow-none" name="nome" required>
-                            </div>
-                            
+                            <div class="mb-4"><label class="form-label text-uppercase">Nome da Empresa ou Prestador</label><input type="text" class="form-control" name="nome" required></div>
                             <div class="row">
-                                <div class="col-md-6 mb-4">
-                                    <label class="form-label">CEL / WHATSAPP (DDD)</label>
-                                    <input type="tel" class="form-control shadow-none" name="telefone" placeholder="79999999999" required>
-                                </div>
-                                <div class="col-md-6 mb-4">
-                                    <label class="form-label">REDES SOCIAIS (OPCIONAL)</label>
-                                    <input type="text" class="form-control shadow-none" name="redes_sociais" placeholder="@seu.perfil">
-                                </div>
+                                <div class="col-md-6 mb-4"><label class="form-label text-uppercase">Cel / Whatsapp</label><input type="tel" class="form-control" name="telefone" placeholder="79999999999" required></div>
+                                <div class="col-md-6 mb-4"><label class="form-label text-uppercase">Instagram (Opcional)</label><input type="text" class="form-control" name="redes_sociais" placeholder="@seu.perfil"></div>
                             </div>
-
                             <div class="row">
-                                <div class="col-8 mb-4">
-                                    <label class="form-label">ENDEREÇO (RUA/AV)</label>
-                                    <input type="text" class="form-control shadow-none" name="endereco" required>
-                                </div>
-                                <div class="col-4 mb-4">
-                                    <label class="form-label">NÚMERO</label>
-                                    <input type="text" class="form-control shadow-none" name="numero" required>
-                                </div>
+                                <div class="col-8 mb-4"><label class="form-label text-uppercase">Endereço (Rua/Av)</label><input type="text" class="form-control" name="endereco" required></div>
+                                <div class="col-4 mb-4"><label class="form-label text-uppercase">Nº</label><input type="text" class="form-control" name="numero" required></div>
                             </div>
-
                             <div class="mb-4">
-                                <label class="form-label">CIDADE EM SERGIPE</label>
-                                <select class="form-select shadow-none" name="cidade" required>
+                                <label class="form-label text-uppercase">Cidade em Sergipe</label>
+                                <select class="form-select" name="cidade" required>
                                     <option value="">Selecione...</option>
                                     {% for cid in cidades %}<option value="{{ cid }}">{{ cid }}</option>{% endfor %}
                                 </select>
                             </div>
-
                             <div class="mb-4">
-                                <label class="form-label">CATEGORIA DO SERVIÇO</label>
-                                <select class="form-select shadow-none" name="categoria_id" required>
+                                <label class="form-label text-uppercase">Categoria do Serviço</label>
+                                <select class="form-select" name="categoria_id" required>
                                     <option value="">Selecione...</option>
                                     {% for cat in categorias %}<option value="{{ cat.id }}">{{ cat.nome }}</option>{% endfor %}
                                 </select>
                             </div>
-
                             <div class="mb-4">
-                                <label class="form-label">DESCREVA SEU SERVIÇO</label>
-                                <textarea class="form-control shadow-none" name="descricao" rows="4" placeholder="Ex: Atendimento domiciliar, aceito cartão..." required></textarea>
+                                <label class="form-label text-uppercase">Descreva seu serviço</label>
+                                <textarea class="form-control" name="descricao" rows="4" required placeholder="Ex: Atendimento domiciliar, aceito pix..."></textarea>
                             </div>
 
                             <div class="alert-taxa mb-4">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="taxa" required>
-                                    <label class="form-check-label fw-bold">
-                                        Declaro estar ciente da taxa de manutenção de R$ 10,00 mensais.
-                                    </label>
+                                    <label class="form-check-label fw-bold">Declaro estar ciente da taxa mensal de R$ 10,00.</label>
                                 </div>
-                                <p class="mt-2 mb-0 small">Atenção: É obrigatório o uso do WhatsApp informado acima, pois é através dele que serão realizadas as cobranças mensais. O não pagamento acarretará na suspensão do anúncio.</p>
+                                <p class="mt-3 mb-0"><strong>Importante:</strong> Utilize o seu número de WhatsApp real. As cobranças mensais e comunicações oficiais do portal serão feitas exclusivamente por ele.</p>
                             </div>
 
                             <button type="submit" class="btn-salvar shadow-lg">FINALIZAR E PUBLICAR</button>
@@ -99,9 +74,8 @@
             </div>
         </div>
     </div>
-
-    <footer class="rodape">
-        <p class="small">Desenvolvido por <strong>Caju Valley Tecnologia</strong> @pertodecasase 🌵</p>
+    <footer class="text-center py-5 text-muted small">
+        Desenvolvido por Caju Valley Tecnologia @pertodecasase 🌵
     </footer>
 </body>
 </html>

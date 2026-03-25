@@ -8,15 +8,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root { --barro: #C84B31; --sol: #F9A825; --areia: #FDF5E6; --folha: #2E8B57; }
-        body { background-color: var(--areia); font-family: 'Segoe UI', system-ui, sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
+        body { background-color: var(--areia); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
         .nav-premium { background-color: var(--barro); border-bottom: 4px solid var(--sol); padding: 12px 0; }
-        .btn-anunciar { background-color: white; color: var(--barro); border-radius: 50px; font-weight: bold; border: none; padding: 8px 20px; transition: 0.3s; }
-        .btn-anunciar:hover { background-color: var(--sol); color: black; }
-        .hero-section { padding: 60px 15px; text-align: center; }
+        .hero { padding: 60px 20px; text-align: center; }
         .search-container { background: white; border-radius: 50px; padding: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); max-width: 650px; margin: 0 auto; border: 1px solid #ddd; }
-        .card-prof { border: none; border-radius: 20px; border-left: 8px solid var(--sol); background: white; margin-bottom: 25px; transition: 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .card-prof { border: none; border-radius: 20px; border-left: 8px solid var(--sol); background: white; margin-bottom: 25px; transition: 0.3s; }
         .btn-whats { background-color: var(--folha); color: white; border-radius: 50px; font-weight: bold; width: 100%; padding: 14px; border: none; }
         .rodape { background-color: #EEDCC6; color: #5D4037; border-top: 2px solid var(--barro); padding: 35px 0; text-align: center; margin-top: auto; }
+        .btn-header { border-radius: 50px; font-weight: bold; font-size: 0.85rem; padding: 8px 20px; border: none; }
     </style>
 </head>
 <body>
@@ -24,13 +23,13 @@
         <div class="container d-flex justify-content-between align-items-center px-3">
             <a href="/" class="text-white text-decoration-none fw-bold fs-4">📍 Perto de Casa SE</a>
             <div class="d-flex gap-2">
-                <a href="/contato" class="btn btn-outline-light btn-sm rounded-pill px-3 fw-bold border-0">Suporte</a>
-                <a href="/cadastro" class="btn-anunciar">ANUNCIAR</a>
+                <a href="/contato" class="btn btn-outline-light btn-header border-0">Suporte</a>
+                <a href="/cadastro" class="btn btn-light btn-header text-dark">Anunciar</a>
             </div>
         </div>
     </nav>
 
-    <div class="container flex-grow-1 py-4">
+    <div class="container flex-grow-1 py-4 px-3">
         {% if mensagem_sucesso %}
         <div class="alert alert-success alert-dismissible fade show shadow-sm mb-5 text-center mx-auto" style="max-width: 600px; border-radius: 20px;">
             <strong>✨ Sucesso!</strong> {{ mensagem_sucesso }}
@@ -38,8 +37,8 @@
         </div>
         {% endif %}
 
-        <div class="hero-section">
-            <h1 class="display-5 fw-bold mb-4" style="color: var(--barro);">O que Sergipe procura?</h1>
+        <div class="hero">
+            <h1 class="display-5 fw-bold mb-4" style="color: var(--barro);">O que Sergipe procura hoje?</h1>
             <div class="search-container">
                 <form action="/" method="GET" class="d-flex">
                     <input type="text" name="q" class="form-control border-0 bg-transparent px-4 shadow-none" style="font-size: 16px;" placeholder="Ex: Pedreiro, Saúde, Capela..." value="{{ termo_busca or '' }}" required>
@@ -48,20 +47,20 @@
             </div>
         </div>
 
-        <div class="mx-auto" style="max-width: 750px;">
+        <div class="mx-auto pb-5" style="max-width: 750px;">
             {% if buscou %}
                 {% for prof in profissionais %}
-                <div class="card card-prof p-3">
-                    <div class="card-body">
+                <div class="card card-prof p-3 shadow-sm">
+                    <div class="card-body text-start">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <h4 class="fw-bold mb-0" style="color: var(--barro);">{{ prof.nome }}</h4>
                             <span class="badge bg-light text-dark border p-2 rounded-pill shadow-sm">📍 {{ prof.cidade }}</span>
                         </div>
                         <p class="text-muted fw-bold small text-uppercase mb-2">🏷️ {{ prof.categoria.nome }}</p>
-                        <p class="text-secondary mb-4">{{ prof.descricao }}</p>
+                        <p class="text-secondary mb-4" style="line-height: 1.6;">{{ prof.descricao }}</p>
                         <div class="bg-light p-3 rounded-4 mb-4 small border">
-                            🏠 <strong>Localização:</strong> {{ prof.endereco }}, nº {{ prof.numero }}<br>
-                            {% if prof.redes_sociais %}📸 <strong>Social:</strong> {{ prof.redes_sociais }}{% endif %}
+                            🏠 <strong>Local:</strong> {{ prof.endereco }}, nº {{ prof.numero }}<br>
+                            {% if prof.redes_sociais %}📸 <strong>Instagram:</strong> {{ prof.redes_sociais }}{% endif %}
                         </div>
                         <a href="https://wa.me/55{{ prof.telefone | replace(' ', '') | replace('-', '') }}" target="_blank" class="btn btn-whats shadow">Chamar no WhatsApp</a>
                     </div>
@@ -72,10 +71,9 @@
     </div>
 
     <footer class="rodape">
-        <p class="mb-1 small fw-bold">Sergipe Conectado 🌵</p>
-        <p class="mb-0 small">Desenvolvido por <strong>Caju Valley Tecnologia</strong> @pertodecasase</p>
+        <p class="small mb-1 fw-bold">Orgulhosamente de Sergipe 🌵</p>
+        <p class="small mb-0">Desenvolvido por <strong>Caju Valley Tecnologia</strong> @pertodecasase</p>
     </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
