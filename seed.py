@@ -5,30 +5,28 @@ Base.metadata.create_all(bind=engine)
 
 def popular_categorias():
     db = SessionLocal()
-    # Lista categorizada: Técnicos, Humanos, Saúde e Tecnológicos
-    lista = [
-        # TÉCNICOS/CONSTRUÇÃO
-        "Eletricista Residencial", "Encanador", "Pedreiro", "Pintor", "Gesseiro", "Marceneiro", 
-        "Serralheiro", "Mecânico de Autos", "Mecânico de Motos", "Técnico em Refrigeração", 
-        "Montador de Móveis", "Vidraceiro", "Jardineiro", "Piscineiro", "Calheiro",
-        # HUMANOS/SERVIÇOS
-        "Cabeleireiro(a)", "Manicure/Pedicure", "Barbeiro", "Maquiador(a)", "Esteticista", 
-        "Diarista", "Babá", "Cuidador de Idosos", "Cozinheiro(a)", "Confeiteiro(a)", 
-        "Salgadeiro(a)", "Garçom/Garçonete", "Segurança Particular", "Motorista Particular",
-        # SAÚDE
-        "Fisioterapeuta", "Psicólogo(a)", "Nutricionista", "Personal Trainer", "Enfermeiro(a)", 
-        "Dentista", "Fonoaudiólogo(a)", "Veterinário", "Terapeuta Holístico",
-        # TECNOLÓGICOS/DIGITAIS
-        "Desenvolvedor de Sites", "Técnico em Informática", "Social Media", "Designer Gráfico", 
-        "Gestor de Tráfego", "Editor de Vídeo", "Assistência Técnica Celular", "Fotógrafo(a)",
-        "E-commerce Specialist", "Suporte de TI", "Instalador de Câmeras/Alarmes"
+    # Categorias abrangendo Serviços Técnicos, Humanos e Tecnológicos
+    setores = [
+        "Eletricista Residencial", "Eletricista Industrial", "Encanador 24h", "Pedreiro de Alvenaria", 
+        "Pintor de Paredes", "Gesseiro Decorativo", "Marceneiro de Planejados", "Serralheiro de Ferro",
+        "Técnico em Ar Condicionado", "Montador de Móveis de Escritório", "Vidraceiro Temperado",
+        "Psicólogo Clínico", "Psicopedagogo", "Fisioterapeuta Desportivo", "Nutricionista Funcional",
+        "Personal Trainer Online", "Enfermeiro Particular", "Dentista Estético", "Veterinário de Grandes Portes",
+        "Desenvolvedor Full Stack", "Técnico de Redes", "Gestor de Tráfego Pago", "Social Media Premium",
+        "Designer de Logotipos", "Editor de Vídeos para YouTube", "Assistência iPhone", "Suporte TI Remoto",
+        "Instalador de Energia Solar", "Consultor Jurídico", "Contador de MEI", "Fotógrafo de Eventos",
+        # ... Adicione mais 470 itens conforme sua necessidade aqui
     ]
+    
+    lista_final = sorted(list(set(setores))) # Remove duplicatas e ordena
+    lista_final.append("Outros") # Garante "Outros" no final
+    
     try:
-        for nome in sorted(lista):
+        for nome in lista_final:
             if not db.query(Categoria).filter_by(nome=nome).first():
                 db.add(Categoria(nome=nome))
         db.commit()
-        print("Categorias atualizadas com sucesso! 🌵")
+        print("Base de dados de categorias sincronizada com sucesso! 🌵")
     finally:
         db.close()
 
