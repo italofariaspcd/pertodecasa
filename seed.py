@@ -5,28 +5,28 @@ Base.metadata.create_all(bind=engine)
 
 def popular_categorias():
     db = SessionLocal()
-    # Categorias abrangendo Serviços Técnicos, Humanos e Tecnológicos
+    # Adicione aqui os 500+ itens categorizados por Técnicos, Humanos, Saúde e Tecnológicos
     setores = [
-        "Eletricista Residencial", "Eletricista Industrial", "Encanador 24h", "Pedreiro de Alvenaria", 
-        "Pintor de Paredes", "Gesseiro Decorativo", "Marceneiro de Planejados", "Serralheiro de Ferro",
-        "Técnico em Ar Condicionado", "Montador de Móveis de Escritório", "Vidraceiro Temperado",
-        "Psicólogo Clínico", "Psicopedagogo", "Fisioterapeuta Desportivo", "Nutricionista Funcional",
-        "Personal Trainer Online", "Enfermeiro Particular", "Dentista Estético", "Veterinário de Grandes Portes",
-        "Desenvolvedor Full Stack", "Técnico de Redes", "Gestor de Tráfego Pago", "Social Media Premium",
-        "Designer de Logotipos", "Editor de Vídeos para YouTube", "Assistência iPhone", "Suporte TI Remoto",
-        "Instalador de Energia Solar", "Consultor Jurídico", "Contador de MEI", "Fotógrafo de Eventos",
-        # ... Adicione mais 470 itens conforme sua necessidade aqui
+        # Técnicos
+        "Eletricista", "Encanador", "Pedreiro", "Gesseiro", "Serralheiro", "Marceneiro", "Pintor",
+        # Humanos
+        "Psicólogo", "Advogado", "Professor Particular", "Babá", "Cuidador de Idosos",
+        # Saúde
+        "Fisioterapeuta", "Dentista", "Enfermeiro Particular", "Nutricionista",
+        # Tecnológicos
+        "Desenvolvedor de Sites", "Gestor de Tráfego", "Social Media", "Técnico de Celular",
+        # ... Expanda esta lista até 500 itens
     ]
     
-    lista_final = sorted(list(set(setores))) # Remove duplicatas e ordena
-    lista_final.append("Outros") # Garante "Outros" no final
+    lista_final = sorted(list(set(setores)))
+    lista_final.append("Outros")
     
     try:
         for nome in lista_final:
             if not db.query(Categoria).filter_by(nome=nome).first():
                 db.add(Categoria(nome=nome))
         db.commit()
-        print("Base de dados de categorias sincronizada com sucesso! 🌵")
+        print("Mega lista sincronizada!")
     finally:
         db.close()
 

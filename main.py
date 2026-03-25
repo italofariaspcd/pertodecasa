@@ -10,7 +10,7 @@ from database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key="caju-valley-premium-2026")
+app.add_middleware(SessionMiddleware, secret_key="caju-valley-premium-2026-master")
 templates = Jinja2Templates(directory="templates")
 
 CIDADES_SE = [
@@ -31,7 +31,7 @@ CIDADES_SE = [
 
 @app.get("/healthcheck")
 def healthcheck():
-    return {"status": "online", "uptime": "Caju Valley Active"}
+    return {"status": "online", "uptime": "Caju Valley Active 🌵"}
 
 @app.get("/")
 def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db)):
@@ -75,7 +75,7 @@ def salvar_cadastro(
     )
     db.add(novo)
     db.commit()
-    request.session["mensagem_sucesso"] = "Cadastro enviado com sucesso! Taxa: R$ 10,00."
+    request.session["mensagem_sucesso"] = "Cadastro realizado! Você receberá a cobrança de R$ 10,00 via WhatsApp."
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 @app.get("/contato")

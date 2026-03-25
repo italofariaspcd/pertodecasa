@@ -10,12 +10,13 @@
         :root { --barro: #C84B31; --sol: #F9A825; --areia: #FDF5E6; --folha: #2E8B57; }
         body { background-color: var(--areia); font-family: 'Segoe UI', system-ui, sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
         .nav-premium { background-color: var(--barro); border-bottom: 4px solid var(--sol); padding: 12px 0; }
-        .hero-section { padding: 50px 15px; text-align: center; }
+        .btn-anunciar { background-color: white; color: var(--barro); border-radius: 50px; font-weight: bold; border: none; padding: 8px 20px; transition: 0.3s; }
+        .btn-anunciar:hover { background-color: var(--sol); color: black; }
+        .hero-section { padding: 60px 15px; text-align: center; }
         .search-container { background: white; border-radius: 50px; padding: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); max-width: 650px; margin: 0 auto; border: 1px solid #ddd; }
         .card-prof { border: none; border-radius: 20px; border-left: 8px solid var(--sol); background: white; margin-bottom: 25px; transition: 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .btn-whats { background-color: var(--folha); color: white; border-radius: 50px; font-weight: bold; width: 100%; padding: 14px; border: none; }
         .rodape { background-color: #EEDCC6; color: #5D4037; border-top: 2px solid var(--barro); padding: 35px 0; text-align: center; margin-top: auto; }
-        @media (max-width: 768px) { .display-5 { font-size: 2rem; } }
     </style>
 </head>
 <body>
@@ -23,8 +24,8 @@
         <div class="container d-flex justify-content-between align-items-center px-3">
             <a href="/" class="text-white text-decoration-none fw-bold fs-4">📍 Perto de Casa SE</a>
             <div class="d-flex gap-2">
-                <a href="/contato" class="btn btn-outline-light btn-sm rounded-pill px-3 fw-bold">Suporte</a>
-                <a href="/cadastro" class="btn btn-light btn-sm rounded-pill fw-bold px-3 text-dark">Anunciar</a>
+                <a href="/contato" class="btn btn-outline-light btn-sm rounded-pill px-3 fw-bold border-0">Suporte</a>
+                <a href="/cadastro" class="btn-anunciar">ANUNCIAR</a>
             </div>
         </div>
     </nav>
@@ -38,10 +39,10 @@
         {% endif %}
 
         <div class="hero-section">
-            <h1 class="display-5 fw-bold mb-4" style="color: var(--barro);">Encontre o serviço ideal</h1>
+            <h1 class="display-5 fw-bold mb-4" style="color: var(--barro);">O que Sergipe procura?</h1>
             <div class="search-container">
                 <form action="/" method="GET" class="d-flex">
-                    <input type="text" name="q" class="form-control border-0 bg-transparent px-4 shadow-none" placeholder="Ex: Pedreiro, Saúde, Capela..." value="{{ termo_busca or '' }}" required>
+                    <input type="text" name="q" class="form-control border-0 bg-transparent px-4 shadow-none" style="font-size: 16px;" placeholder="Ex: Pedreiro, Saúde, Capela..." value="{{ termo_busca or '' }}" required>
                     <button type="submit" class="btn btn-warning rounded-pill px-4 fw-bold">BUSCAR</button>
                 </form>
             </div>
