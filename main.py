@@ -8,26 +8,12 @@ from starlette.middleware.sessions import SessionMiddleware
 import models
 from database import engine, get_db
 
-# Inicializa as tabelas do banco de dados
 models.Base.metadata.create_all(bind=engine)
-
 app = FastAPI()
-
-# Middleware para mensagens de feedback (ex: "Cadastro realizado com sucesso")
-app.add_middleware(SessionMiddleware, secret_key="caju-valley-nordeste-sergipe-2026")
-
+app.add_middleware(SessionMiddleware, secret_key="caju-valley-premium-2026")
 templates = Jinja2Templates(directory="templates")
 
-# --- ROTA DE MANUTENÇÃO (KEEP ALIVE) ---
-@app.get("/healthcheck")
-def healthcheck():
-    """
-    Esta rota serve para o Cron-job.org ou UptimeRobot acessarem 
-    a cada 10 minutos e impedirem o Render de derrubar o site.
-    """
-    return {"status": "online", "monitor": "Caju Valley Ativa 🌵"}
-
-# --- LISTA OFICIAL DE MUNICÍPIOS DE SERGIPE ---
+# Todos os 75 Municípios de Sergipe
 CIDADES_SE = [
     "Amparo de São Francisco", "Aquidabã", "Aracaju", "Arauá", "Areia Branca", "Barra dos Coqueiros", 
     "Boquim", "Brejo Grande", "Campo do Brito", "Canhoba", "Canindé de São Francisco", "Capela", 
@@ -44,15 +30,17 @@ CIDADES_SE = [
     "Siriri", "Telha", "Tobias Barreto", "Tomar do Geru", "Umbaúba"
 ]
 
+@app.get("/healthcheck")
+def healthcheck():
+    return {"status": "online", "monitor": "Caju Valley 🌵"}
+
 @app.get("/")
 def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db)):
     profissionais = []
     buscou = False
     sucesso = request.session.pop("mensagem_sucesso", None)
-    
     if q and q.strip() != "":
         buscou = True
-        # Busca por Nome, Descrição, Cidade ou Endereço
         profissionais = db.query(models.Profissional).filter(
             models.Profissional.ativo == True,
             or_(
@@ -62,66 +50,36 @@ def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db
                 models.Profissional.endereco.ilike(f"%{q}%")
             )
         ).all()
-        
     return templates.TemplateResponse("index.html", {
-        "request": request, 
-        "profissionais": profissionais, 
-        "termo_busca": q, 
-        "buscou": buscou, 
-        "mensagem_sucesso": sucesso
+        "request": request, "profissionais": profissionais, 
+        "termo_busca": q, "buscou": buscou, "mensagem_sucesso": sucesso
     })
 
 @app.get("/cadastro")
 def form_cadastro(request: Request, db: Session = Depends(get_db)):
-    # Carrega as +200 categorias para o dropdown
     categorias = db.query(models.Categoria).order_by(models.Categoria.nome).all()
     return templates.TemplateResponse("cadastro.html", {
-        "request": request, 
-        "categorias": categorias, 
-        "cidades": sorted(CIDADES_SE)
+        "request": request, "categorias": categorias, "cidades": sorted(CIDADES_SE)
     })
 
 @app.post("/cadastrar")
 def salvar_cadastro(
-    request: Request, 
-    nome: str = Form(...), 
-    telefone: str = Form(...), 
-    redes_sociais: str = Form(None),
-    endereco: str = Form(...), 
-    numero: str = Form(...), 
-    cidade: str = Form(...),
-    descricao: str = Form(...), 
-    categoria_id: int = Form(...), 
+    request: Request, nome: str = Form(...), telefone: str = Form(...), 
+    redes_sociais: str = Form(None), endereco: str = Form(...), 
+    numero: str = Form(...), cidade: str = Form(...),
+    descricao: str = Form(...), categoria_id: int = Form(...), 
     db: Session = Depends(get_db)
 ):
-    novo_prof = models.Profissional(
-        nome=nome, 
-        telefone=telefone, 
-        redes_sociais=redes_sociais, 
-        endereco=endereco, 
-        numero=numero, 
-        cidade=cidade, 
-        descricao=descricao, 
-        categoria_id=categoria_id
+    novo = models.Profissional(
+        nome=nome, telefone=telefone, redes_sociais=redes_sociais,
+        endereco=endereco, numero=numero, cidade=cidade,
+        descricao=descricao, categoria_id=categoria_id
     )
-    db.add(novo_prof)
+    db.add(novo)
     db.commit()
-    request.session["mensagem_sucesso"] = "Cadastro realizado com sucesso! Aguarde o contacto para ativação da taxa de R$ 10,00."
+    request.session["mensagem_sucesso"] = "Cadastro realizado! Taxa de R$ 10,00 via WhatsApp."
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 @app.get("/contato")
 def pagina_contato(request: Request):
     return templates.TemplateResponse("contato.html", {"request": request})
-
-@app.get("/admin")
-def painel_admin(request: Request, db: Session = Depends(get_db)):
-    profissionais = db.query(models.Profissional).all()
-    return templates.TemplateResponse("admin.html", {"request": request, "profissionais": profissionais})
-
-@app.get("/admin/deletar/{id}")
-def deletar_profissional(id: int, db: Session = Depends(get_db)):
-    prof = db.query(models.Profissional).filter(models.Profissional.id == id).first()
-    if prof:
-        db.delete(prof)
-        db.commit()
-    return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
