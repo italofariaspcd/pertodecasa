@@ -8,20 +8,13 @@ from starlette.middleware.sessions import SessionMiddleware
 import models
 from database import engine, get_db
 
-# Inicializa o banco de dados
 models.Base.metadata.create_all(bind=engine)
-
 app = FastAPI()
-
-# Middleware para mensagens de feedback (Sucesso/Erro)
-app.add_middleware(SessionMiddleware, secret_key="caju-valley-terracota-2026")
-
+app.add_middleware(SessionMiddleware, secret_key="caju-valley-dark-terracota-2026")
 templates = Jinja2Templates(directory="templates")
 
-# Senha do Painel Admin
 ADMIN_PASSWORD = "Cica29xl!@"
 
-# Lista de Cidades (Expandir conforme necessidade)
 CIDADES_SE = [
     "Amparo de São Francisco", "Aquidabã", "Aracaju", "Arauá", "Areia Branca", "Barra dos Coqueiros", 
     "Boquim", "Brejo Grande", "Campo do Brito", "Canhoba", "Canindé de São Francisco", "Capela", 
@@ -40,7 +33,6 @@ CIDADES_SE = [
 
 @app.get("/healthcheck")
 def healthcheck():
-    """Rota para manter o Render acordado"""
     return {"status": "online", "monitor": "Caju Valley Terracota Active 🌵"}
 
 @app.get("/")
@@ -48,7 +40,6 @@ def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db
     profissionais = []
     buscou = False
     sucesso = request.session.pop("mensagem_sucesso", None)
-    
     if q and q.strip() != "":
         buscou = True
         profissionais = db.query(models.Profissional).filter(
@@ -60,35 +51,24 @@ def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db
                 models.Profissional.endereco.ilike(f"%{q}%")
             )
         ).all()
-        
     return templates.TemplateResponse("index.html", {
-        "request": request, 
-        "profissionais": profissionais, 
-        "termo_busca": q, 
-        "buscou": buscou, 
-        "mensagem_sucesso": sucesso
+        "request": request, "profissionais": profissionais, 
+        "termo_busca": q, "buscou": buscou, "mensagem_sucesso": sucesso
     })
 
 @app.get("/cadastro")
 def form_cadastro(request: Request, db: Session = Depends(get_db)):
     categorias = db.query(models.Categoria).order_by(models.Categoria.nome).all()
     return templates.TemplateResponse("cadastro.html", {
-        "request": request, 
-        "categorias": categorias, 
-        "cidades": sorted(CIDADES_SE)
+        "request": request, "categorias": categorias, "cidades": sorted(CIDADES_SE)
     })
 
 @app.post("/cadastrar")
 def salvar_cadastro(
-    request: Request, 
-    nome: str = Form(...), 
-    telefone: str = Form(...), 
-    redes_sociais: str = Form(None), 
-    endereco: str = Form(...), 
-    numero: str = Form(...), 
-    cidade: str = Form(...),
-    descricao: str = Form(...), 
-    categoria_id: int = Form(...), 
+    request: Request, nome: str = Form(...), telefone: str = Form(...), 
+    redes_sociais: str = Form(None), endereco: str = Form(...), 
+    numero: str = Form(...), cidade: str = Form(...),
+    descricao: str = Form(...), categoria_id: int = Form(...), 
     db: Session = Depends(get_db)
 ):
     novo = models.Profissional(
@@ -98,8 +78,7 @@ def salvar_cadastro(
     )
     db.add(novo)
     db.commit()
-    # Mensagem padronizada com as regras de cobrança
-    request.session["mensagem_sucesso"] = "Cadastro realizado! Você receberá as instruções da taxa de R$ 10,00 via WhatsApp."
+    request.session["mensagem_sucesso"] = "Cadastro enviado! Aguarde instruções via WhatsApp."
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 @app.get("/contato")
@@ -113,7 +92,7 @@ def login_page(request: Request):
 @app.post("/admin")
 def painel_admin(request: Request, senha: str = Form(...), db: Session = Depends(get_db)):
     if senha != ADMIN_PASSWORD:
-        return templates.TemplateResponse("login_admin.html", {"request": request, "erro": "Chave de acesso inválida!"})
+        return templates.TemplateResponse("login_admin.html", {"request": request, "erro": "Senha incorreta!"})
     profissionais = db.query(models.Profissional).all()
     return templates.TemplateResponse("admin.html", {"request": request, "profissionais": profissionais})
 

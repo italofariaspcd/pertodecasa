@@ -7,26 +7,26 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌵</text></svg>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        :root { --terracota: #953d15; --caramelo: #c57d4c; --oliva: #a7bc72; --fundo: #fdfaf5; --texto: #3e2723; }
-        body { background-color: var(--fundo); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; display: flex; flex-direction: column; color: var(--texto); }
+        :root { --terracota: #953d15; --caramelo: #c57d4c; --oliva: #a7bc72; --fundo-dark: #e8dcc4; --texto: #2d1a12; }
+        body { background-color: var(--fundo-dark); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; display: flex; flex-direction: column; color: var(--texto); }
         
         .nav-premium { background-color: var(--terracota); border-bottom: 4px solid var(--caramelo); padding: 15px 0; }
         .btn-anunciar { background-color: white; color: var(--terracota); border-radius: 50px; font-weight: bold; border: none; padding: 8px 24px; transition: 0.3s; font-size: 0.9rem; }
         .btn-anunciar:hover { background-color: var(--oliva); color: white; transform: scale(1.05); }
 
-        .hero { padding: 70px 20px; text-align: center; }
+        .hero { padding: 60px 20px; text-align: center; }
         .hero h1 { color: var(--terracota); font-weight: 800; letter-spacing: -1px; }
         
-        .search-container { background: white; border-radius: 50px; padding: 10px; box-shadow: 0 15px 35px rgba(149, 61, 21, 0.1); max-width: 650px; margin: 0 auto; border: 1px solid rgba(197, 125, 76, 0.3); }
+        .search-container { background: rgba(255, 255, 255, 0.9); border-radius: 50px; padding: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); max-width: 650px; margin: 0 auto; border: 1px solid var(--caramelo); }
         .search-input { font-size: 16px !important; }
 
-        .card-prof { border: none; border-radius: 25px; border-left: 10px solid var(--oliva); background: white; margin-bottom: 30px; transition: 0.4s ease; box-shadow: 0 8px 20px rgba(0,0,0,0.04); }
-        .card-prof:hover { transform: translateY(-8px); box-shadow: 0 15px 40px rgba(149, 61, 21, 0.12); }
+        .card-prof { border: none; border-radius: 25px; border-left: 10px solid var(--oliva); background: white; margin-bottom: 30px; transition: 0.4s ease; box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+        .card-prof:hover { transform: translateY(-8px); box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
         
-        .btn-whats { background: linear-gradient(135deg, var(--oliva), #8e9e61); color: white; border-radius: 50px; font-weight: bold; width: 100%; padding: 16px; border: none; transition: 0.3s; box-shadow: 0 4px 15px rgba(167, 188, 114, 0.4); }
+        .btn-whats { background: linear-gradient(135deg, var(--oliva), #8e9e61); color: white; border-radius: 50px; font-weight: bold; width: 100%; padding: 16px; border: none; transition: 0.3s; }
         .btn-whats:hover { background: var(--terracota); transform: scale(1.02); }
 
-        .rodape { background-color: #f1ede7; color: #6d4c41; border-top: 2px solid var(--terracota); padding: 40px 0; text-align: center; margin-top: auto; }
+        .rodape { background-color: #d8cbb3; color: #5d4037; border-top: 2px solid var(--terracota); padding: 40px 0; text-align: center; margin-top: auto; }
     </style>
 </head>
 <body>
@@ -34,7 +34,7 @@
         <div class="container d-flex justify-content-between align-items-center px-3">
             <a href="/" class="text-white text-decoration-none fw-bold fs-4">📍 Perto de Casa SE</a>
             <div class="d-flex gap-3">
-                <a href="/contato" class="text-white text-decoration-none small fw-bold mt-2 d-none d-md-block">Suporte</a>
+                <a href="/contato" class="text-white text-decoration-none small fw-bold mt-2">Suporte</a>
                 <a href="/cadastro" class="btn-anunciar shadow-sm">ANUNCIAR</a>
             </div>
         </div>
@@ -68,8 +68,8 @@
                             <span class="badge bg-light text-dark border p-2 rounded-pill px-3">📍 {{ prof.cidade }}</span>
                         </div>
                         <p class="fw-bold small text-uppercase mb-3" style="color: var(--caramelo); letter-spacing: 1px;">🏷️ {{ prof.categoria.nome }}</p>
-                        <p class="text-secondary mb-4" style="line-height: 1.7; font-size: 1.05rem;">{{ prof.descricao }}</p>
-                        <div class="p-3 rounded-4 mb-4 small border-start border-4" style="background-color: #f9f5f0; border-color: var(--caramelo);">
+                        <p class="text-secondary mb-4" style="line-height: 1.7;">{{ prof.descricao }}</p>
+                        <div class="p-3 rounded-4 mb-4 small border-start border-4" style="background-color: #f5ede0; border-color: var(--caramelo);">
                             🏠 <strong>Localização:</strong> {{ prof.endereco }}, nº {{ prof.numero }}<br>
                             {% if prof.redes_sociais %}📸 <strong>Instagram:</strong> {{ prof.redes_sociais }}{% endif %}
                         </div>

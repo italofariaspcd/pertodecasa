@@ -6,19 +6,21 @@
     <title>Anunciar - Perto de Casa SE</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        :root { --terracota: #953d15; --caramelo: #c57d4c; --oliva: #a7bc72; --fundo: #fdfaf5; }
-        body { background-color: var(--fundo); min-height: 100vh; font-size: 16px; display: flex; flex-direction: column; }
+        :root { --terracota: #953d15; --caramelo: #c57d4c; --oliva: #a7bc72; --fundo-dark: #e8dcc4; }
+        body { background-color: var(--fundo-dark); min-height: 100vh; font-size: 16px; display: flex; flex-direction: column; }
         .nav-premium { background-color: var(--terracota); border-bottom: 4px solid var(--caramelo); padding: 15px 0; }
-        .btn-voltar { color: white; text-decoration: none; font-weight: bold; border: 2px solid white; padding: 8px 20px; border-radius: 50px; transition: 0.3s; font-size: 0.85rem; }
+        .btn-voltar { color: white; text-decoration: none; font-weight: bold; border: 2px solid white; padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; }
         .btn-voltar:hover { background: white; color: var(--terracota); }
 
-        .card-cadastro { border-radius: 30px; border: none; box-shadow: 0 20px 60px rgba(149, 61, 21, 0.15); margin-top: 20px; }
-        .form-label { font-weight: 700; color: var(--terracota); margin-bottom: 10px; font-size: 0.9rem; }
-        .form-control, .form-select { border-radius: 15px; padding: 18px; border: 2px solid #eee; font-size: 16px; background-color: #fafafa; }
-        .form-control:focus { border-color: var(--caramelo); background-color: white; box-shadow: none; }
+        .card-cadastro { border-radius: 30px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.12); margin-top: 20px; }
+        .form-label { font-weight: 700; color: var(--terracota); margin-bottom: 10px; }
+        .form-control, .form-select { border-radius: 15px; padding: 18px; border: 2px solid #ddd; font-size: 16px; background-color: #fdfdfd; }
+        .form-control:focus { border-color: var(--caramelo); box-shadow: none; }
         
-        .btn-salvar { background: linear-gradient(135deg, var(--oliva), #8e9e61); color: white; font-weight: bold; border-radius: 20px; padding: 20px; border: none; font-size: 1.2rem; width: 100%; box-shadow: 0 10px 20px rgba(167, 188, 114, 0.3); }
-        .alert-taxa { background-color: #fff8f0; color: #953d15; border-radius: 20px; border: 2px dashed var(--caramelo); padding: 25px; }
+        .btn-salvar { background: var(--oliva); color: white; font-weight: bold; border-radius: 20px; padding: 20px; border: none; font-size: 1.2rem; width: 100%; transition: 0.3s; }
+        .btn-salvar:hover { background: var(--terracota); transform: translateY(-3px); }
+        .alert-taxa { background-color: #f5ede0; color: #953d15; border-radius: 20px; border: 2px dashed var(--caramelo); padding: 25px; }
+        .rodape { background-color: #d8cbb3; color: #5d4037; border-top: 2px solid var(--terracota); padding: 30px 0; text-align: center; margin-top: auto; }
     </style>
 </head>
 <body>
@@ -33,72 +35,66 @@
         <div class="row justify-content-center">
             <div class="col-12 col-lg-9">
                 <div class="card card-cadastro">
-                    <div class="card-body p-4 p-md-5">
+                    <div class="card-body p-4 p-md-5 bg-white">
                         <h2 class="fw-bold mb-4 text-center" style="color: var(--terracota);">Anunciar Meu Serviço</h2>
                         <form action="/cadastrar" method="POST">
                             <div class="mb-4">
-                                <label class="form-label">NOME DA EMPRESA OU PROFISSIONAL</label>
-                                <input type="text" class="form-control" name="nome" placeholder="Como os clientes devem te chamar?" required>
+                                <label class="form-label text-uppercase">Nome da Empresa ou Prestador</label>
+                                <input type="text" class="form-control" name="nome" required>
                             </div>
-                            
                             <div class="row">
                                 <div class="col-md-6 mb-4">
-                                    <label class="form-label">WHATSAPP (DDD + NÚMERO)</label>
-                                    <input type="tel" class="form-control" name="telefone" placeholder="799..." required>
+                                    <label class="form-label text-uppercase">WhatsApp (79...)</label>
+                                    <input type="tel" class="form-control" name="telefone" required>
                                 </div>
                                 <div class="col-md-6 mb-4">
-                                    <label class="form-label">INSTAGRAM (@PERFIL)</label>
-                                    <input type="text" class="form-control" name="redes_sociais" placeholder="@seunome">
+                                    <label class="form-label text-uppercase">Instagram (@...)</label>
+                                    <input type="text" class="form-control" name="redes_sociais">
                                 </div>
                             </div>
-
                             <div class="row">
-                                <div class="col-8 col-md-9 mb-4">
-                                    <label class="form-label">RUA / LOGRADOURO</label>
+                                <div class="col-8 mb-4">
+                                    <label class="form-label text-uppercase">Rua / Logradouro</label>
                                     <input type="text" class="form-control" name="endereco" required>
                                 </div>
-                                <div class="col-4 col-md-3 mb-4">
-                                    <label class="form-label">Nº</label>
+                                <div class="col-4 mb-4">
+                                    <label class="form-label text-uppercase">Nº</label>
                                     <input type="text" class="form-control" name="numero" required>
                                 </div>
                             </div>
-
                             <div class="mb-4">
-                                <label class="form-label">MUNICÍPIO EM SERGIPE</label>
+                                <label class="form-label text-uppercase">Cidade em Sergipe</label>
                                 <select class="form-select" name="cidade" required>
-                                    <option value="">Selecione a cidade...</option>
+                                    <option value="">Selecione...</option>
                                     {% for cid in cidades %}<option value="{{ cid }}">{{ cid }}</option>{% endfor %}
                                 </select>
                             </div>
-
                             <div class="mb-4">
-                                <label class="form-label">CATEGORIA DO SERVIÇO</label>
+                                <label class="form-label text-uppercase">Categoria</label>
                                 <select class="form-select" name="categoria_id" required>
-                                    <option value="">Selecione a categoria...</option>
                                     {% for cat in categorias %}<option value="{{ cat.id }}">{{ cat.nome }}</option>{% endfor %}
                                 </select>
                             </div>
-
                             <div class="mb-4">
-                                <label class="form-label">DESCRIÇÃO DOS SEUS SERVIÇOS</label>
-                                <textarea class="form-control" name="descricao" rows="5" required placeholder="Ex: Sou encanador há 10 anos, atendo urgências e aceito cartão."></textarea>
+                                <label class="form-label text-uppercase">Descrição</label>
+                                <textarea class="form-control" name="descricao" rows="4" required></textarea>
                             </div>
 
                             <div class="alert-taxa mb-5">
-                                <div class="form-check mb-3">
+                                <div class="form-check mb-2">
                                     <input class="form-check-input" type="checkbox" id="taxa" required>
-                                    <label class="form-check-label fw-bold" for="taxa">Aceito a taxa mensal de R$ 10,00.</label>
+                                    <label class="form-check-label fw-bold" for="taxa">Taxa mensal de R$ 10,00.</label>
                                 </div>
-                                <p class="mb-0 small fw-bold">IMPORTANTE: As cobranças e o suporte serão realizados exclusivamente pelo WhatsApp cadastrado. Mantenha seu contato atualizado.</p>
+                                <p class="mb-0 small fw-bold">Cobrança e suporte via WhatsApp.</p>
                             </div>
 
-                            <button type="submit" class="btn-salvar shadow-lg">PUBLICAR ANÚNCIO AGORA</button>
+                            <button type="submit" class="btn-salvar shadow-lg">PUBLICAR ANÚNCIO</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <footer class="text-center py-5 text-muted small">Caju Valley Tecnologia 🌵</footer>
+    <footer class="rodape">Caju Valley Tecnologia 🌵</footer>
 </body>
 </html>

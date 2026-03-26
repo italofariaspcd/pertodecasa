@@ -6,19 +6,22 @@
     <title>Suporte - Perto de Casa SE</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        :root { --terracota: #953d15; --caramelo: #c57d4c; --oliva: #a7bc72; --fundo: #fdfaf5; }
-        body { background-color: var(--fundo); min-height: 100vh; display: flex; flex-direction: column; }
+        :root { --terracota: #953d15; --caramelo: #c57d4c; --oliva: #a7bc72; --fundo-dark: #e8dcc4; }
+        body { background-color: var(--fundo-dark); min-height: 100vh; display: flex; flex-direction: column; }
         .nav-premium { background-color: var(--terracota); border-bottom: 4px solid var(--caramelo); padding: 15px 0; }
-        .card-contato { border-radius: 30px; border: none; box-shadow: 0 15px 40px rgba(0,0,0,0.1); margin-top: 40px; }
+        .card-contato { border-radius: 30px; border: none; box-shadow: 0 15px 40px rgba(0,0,0,0.15); margin-top: 40px; }
         .btn-enviar { background: var(--oliva); color: white; font-weight: bold; border-radius: 15px; padding: 15px; border: none; width: 100%; transition: 0.3s; }
-        .btn-enviar:hover { background: var(--terracota); }
+        .btn-enviar:hover { background: var(--terracota); transform: translateY(-2px); }
+        .form-control { border-radius: 12px; border: 2px solid #d8cbb3; background-color: #faf6ed; }
+        .form-control:focus { border-color: var(--caramelo); background-color: white; box-shadow: none; }
+        .rodape { background-color: #d8cbb3; color: #5d4037; border-top: 2px solid var(--terracota); padding: 30px 0; text-align: center; margin-top: auto; }
     </style>
 </head>
 <body>
     <nav class="nav-premium sticky-top shadow">
         <div class="container d-flex justify-content-between align-items-center px-3">
             <a href="/" class="text-white text-decoration-none fw-bold fs-5">📍 Perto de Casa SE</a>
-            <a href="/" class="text-white text-decoration-none small fw-bold" style="border: 1px solid white; padding: 5px 15px; border-radius: 50px;">← INÍCIO</a>
+            <a href="/" class="text-white text-decoration-none small fw-bold" style="border: 2px solid white; padding: 5px 15px; border-radius: 50px;">← INÍCIO</a>
         </div>
     </nav>
 
@@ -33,9 +36,9 @@
                         <form action="https://formsubmit.co/italofariaspcd@gmail.com" method="POST">
                             <input type="hidden" name="_captcha" value="false">
                             <input type="hidden" name="_next" value="https://pertodecasa.onrender.com/">
-                            <div class="mb-4"><label class="fw-bold small text-muted text-uppercase mb-2">Seu Nome</label><input type="text" name="name" class="form-control p-3 border-2" style="border-radius: 12px;" required></div>
-                            <div class="mb-4"><label class="fw-bold small text-muted text-uppercase mb-2">E-mail</label><input type="email" name="email" class="form-control p-3 border-2" style="border-radius: 12px;" required></div>
-                            <div class="mb-4"><label class="fw-bold small text-muted text-uppercase mb-2">Mensagem</label><textarea name="message" class="form-control p-3 border-2" style="border-radius: 12px;" rows="4" required></textarea></div>
+                            <div class="mb-4"><label class="fw-bold small text-muted text-uppercase mb-2">Seu Nome</label><input type="text" name="name" class="form-control p-3" required></div>
+                            <div class="mb-4"><label class="fw-bold small text-muted text-uppercase mb-2">E-mail</label><input type="email" name="email" class="form-control p-3" required></div>
+                            <div class="mb-4"><label class="fw-bold small text-muted text-uppercase mb-2">Mensagem</label><textarea name="message" class="form-control p-3" rows="4" required></textarea></div>
                             <button type="submit" class="btn-enviar shadow">ENVIAR MENSAGEM</button>
                         </form>
                     </div>
@@ -43,6 +46,6 @@
             </div>
         </div>
     </div>
-    <footer class="text-center py-4 text-muted small">Caju Valley Tecnologia 🌵</footer>
+    <footer class="rodape">Caju Valley Tecnologia 🌵</footer>
 </body>
 </html>
