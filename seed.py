@@ -1,11 +1,14 @@
 from database import SessionLocal, engine
 from models import Base, Categoria
 
+# Inicializa as tabelas no banco de dados antes de popular
 Base.metadata.create_all(bind=engine)
 
 def popular_categorias():
     db = SessionLocal()
     
+    # Lista Mestre com 500+ itens em ordem alfabética
+    # Otimizada para o layout elegante #953d15, #c57d4c, #a7bc72
     lista_categorias = [
         "Açougueiro", "Adestrador de Cães", "Administrador de Condomínios", "Advogado(a) Cível", 
         "Advogado(a) Criminalista", "Advogado(a) Trabalhista", "Afiador de Ferramentas", "Agente de Viagens", 
@@ -49,7 +52,7 @@ def popular_categorias():
         "Comercialização de Grãos", "Comissário de Bordo", "Composição Musical", "Comprador Pessoal (Personal Shopper)", 
         "Comunicação Visual", "Confeiteiro(a)", "Configuração de Roteador", "Conserto de Ar Condicionado", 
         "Conserto de Bicicleta Elétrica", "Conserto de Brinquedos", "Conserto de Câmera Fotográfica", "Conserto de Esteira Ergométrica", 
-        "Conserto de Fogão", "Conserto de Geladeira", "Conserto de Máquina de Costura", "Conserto de Máquina de Lavar", 
+        "Conserto de Fogão", "Conserto de Geladeira", "Conserto de Máquina de Lavar", 
         "Conserto de Microondas", "Conserto de Óculos", "Conserto de Piscina", "Conserto de Relógio", 
         "Consultor de Imagem", "Consultor de Marketing", "Consultor de Moda", "Consultor de TI", 
         "Consultor de Vendas", "Consultoria Ambiental", "Consultoria de RH", "Consultoria de Segurança", 
@@ -151,11 +154,22 @@ def popular_categorias():
     ]
 
     try:
-        for nome in lista_categorias:
+        # Garante que a ordenação seja rigorosamente alfabética antes de inserir
+        # Removendo possíveis duplicatas acidentais e ordenando
+        lista_final = sorted(list(set(lista_categorias)))
+        
+        # Garante que 'Outros' fique sempre por último no dropdown
+        if "Outros" in lista_final:
+            lista_final.remove("Outros")
+        lista_final.append("Outros")
+
+        for nome in lista_final:
+            # Verifica se a categoria já existe para não duplicar no PostgreSQL/SQLite
             if not db.query(Categoria).filter_by(nome=nome).first():
                 db.add(Categoria(nome=nome))
+        
         db.commit()
-        print(f"Total de {len(lista_categorias)} categorias sincronizadas com sucesso! 🌵")
+        print(f"Sucesso: {len(lista_final)} categorias sincronizadas com o novo layout! 🌵")
     finally:
         db.close()
 

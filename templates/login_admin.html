@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Acesso Restrito - Perto de Casa SE</title>
+    <title>Admin - Perto de Casa SE</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌵</text></svg>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        :root { --barro: #C84B31; --sol: #F9A825; --areia: #FDF5E6; }
-        body { background-color: var(--areia); min-height: 100vh; display: flex; flex-direction: column; }
-        .nav-premium { background-color: var(--barro); border-bottom: 4px solid var(--sol); padding: 12px 0; }
+        :root { --terracota: #953d15; --caramelo: #c57d4c; --oliva: #a7bc72; --fundo: #fdfaf5; }
+        body { background-color: var(--fundo); min-height: 100vh; display: flex; flex-direction: column; }
+        .nav-premium { background-color: var(--terracota); border-bottom: 4px solid var(--caramelo); padding: 12px 0; }
+        .btn-voltar { background: transparent; color: white; border: 1px solid white; border-radius: 50px; text-decoration: none; padding: 6px 18px; font-weight: bold; font-size: 0.9rem; }
         .card-login { border-radius: 25px; border: none; box-shadow: 0 15px 45px rgba(0,0,0,0.1); margin-top: 50px; }
-        .btn-entrar { background-color: var(--barro); color: white; font-weight: bold; border-radius: 15px; padding: 14px; border: none; width: 100%; transition: 0.3s; }
-        .btn-entrar:hover { background-color: #a03c27; transform: translateY(-2px); }
-        .rodape { background-color: #EEDCC6; color: #5D4037; border-top: 2px solid var(--barro); padding: 30px 0; text-align: center; margin-top: auto; }
+        .btn-entrar { background-color: var(--terracota); color: white; font-weight: bold; border-radius: 15px; padding: 14px; border: none; width: 100%; transition: 0.3s; }
+        .btn-entrar:hover { background-color: var(--caramelo); transform: translateY(-2px); }
+        .rodape { background-color: #eee; color: #555; border-top: 2px solid var(--terracota); padding: 30px 0; text-align: center; margin-top: auto; }
     </style>
 </head>
 <body>
     <nav class="nav-premium sticky-top shadow-sm">
         <div class="container d-flex justify-content-between align-items-center px-3">
             <a href="/" class="text-white text-decoration-none fw-bold fs-5">📍 Perto de Casa SE</a>
-            <a href="/" class="btn btn-outline-light btn-sm rounded-pill px-3 fw-bold border-0">← Início</a>
+            <a href="/" class="btn-voltar">← Início</a>
         </div>
     </nav>
 
@@ -29,27 +30,22 @@
             <div class="col-12 col-md-5 col-lg-4">
                 <div class="card card-login overflow-hidden">
                     <div class="card-header py-4 text-center bg-dark text-white border-0">
-                        <h5 class="mb-0 fw-bold">🔐 PAINEL DE CONTROLE</h5>
+                        <h5 class="mb-0 fw-bold">🔐 ACESSO RESTRITO</h5>
                     </div>
                     <div class="card-body p-4 p-md-5 bg-white">
-                        {% if erro %}
-                        <div class="alert alert-danger small text-center py-2" style="border-radius: 10px;">{{ erro }}</div>
-                        {% endif %}
+                        {% if erro %}<div class="alert alert-danger small text-center">{{ erro }}</div>{% endif %}
                         <form action="/admin" method="POST">
                             <div class="mb-4">
-                                <label class="fw-bold small text-muted text-uppercase mb-2">Chave de Acesso</label>
+                                <label class="fw-bold small text-muted text-uppercase mb-2">Senha do Painel</label>
                                 <input type="password" name="senha" class="form-control p-3 shadow-none" style="border-radius: 12px; border: 2px solid #eee;" placeholder="••••••••" required>
                             </div>
-                            <button type="submit" class="btn-entrar shadow">ACESSAR AGORA</button>
+                            <button type="submit" class="btn-entrar shadow">ENTRAR NO PAINEL</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <footer class="rodape">
-        <p class="small mb-0">Desenvolvido por <strong>Caju Valley Tecnologia</strong> @pertodecasase 🌵</p>
-    </footer>
+    <footer class="rodape"><p class="small mb-0">Caju Valley Tecnologia @pertodecasase 🌵</p></footer>
 </body>
 </html>
