@@ -6,14 +6,11 @@
     <title>Suporte - Perto de Casa SE</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        :root { --terracota: #953d15; --caramelo: #c57d4c; --oliva: #a7bc72; --fundo-dark: #e8dcc4; }
+        :root { --terracota: #953d15; --caramelo: #c57d4c; --fundo-dark: #e8dcc4; }
         body { background-color: var(--fundo-dark); min-height: 100vh; display: flex; flex-direction: column; }
         .nav-premium { background-color: var(--terracota); border-bottom: 4px solid var(--caramelo); padding: 15px 0; }
         .card-contato { border-radius: 30px; border: none; box-shadow: 0 15px 40px rgba(0,0,0,0.15); margin-top: 40px; }
-        .btn-enviar { background: var(--oliva); color: white; font-weight: bold; border-radius: 15px; padding: 15px; border: none; width: 100%; transition: 0.3s; }
-        .btn-enviar:hover { background: var(--terracota); transform: translateY(-2px); }
-        .form-control { border-radius: 12px; border: 2px solid #d8cbb3; background-color: #faf6ed; }
-        .form-control:focus { border-color: var(--caramelo); background-color: white; box-shadow: none; }
+        .btn-enviar { background: #a7bc72; color: white; font-weight: bold; border-radius: 15px; padding: 15px; border: none; width: 100%; }
         .rodape { background-color: #d8cbb3; color: #5d4037; border-top: 2px solid var(--terracota); padding: 30px 0; text-align: center; margin-top: auto; }
     </style>
 </head>
@@ -21,25 +18,23 @@
     <nav class="nav-premium sticky-top shadow">
         <div class="container d-flex justify-content-between align-items-center px-3">
             <a href="/" class="text-white text-decoration-none fw-bold fs-5">📍 Perto de Casa SE</a>
-            <a href="/" class="text-white text-decoration-none small fw-bold" style="border: 2px solid white; padding: 5px 15px; border-radius: 50px;">← INÍCIO</a>
+            <a href="/" class="btn btn-outline-light border-0 btn-sm rounded-pill px-3 fw-bold" style="border: 1px solid white !important;">← INÍCIO</a>
         </div>
     </nav>
-
     <div class="container py-5 flex-grow-1">
         <div class="row justify-content-center">
-            <div class="col-12 col-md-6 col-lg-5">
+            <div class="col-12 col-md-6">
                 <div class="card card-contato overflow-hidden">
                     <div class="card-header py-4 text-center text-white border-0" style="background-color: var(--terracota);">
-                        <h4 class="mb-0 fw-bold">✉️ Central de Suporte</h4>
+                        <h4 class="mb-0 fw-bold">✉️ Suporte Caju Valley</h4>
                     </div>
                     <div class="card-body p-4 p-md-5 bg-white">
                         <form action="https://formsubmit.co/italofariaspcd@gmail.com" method="POST">
-                            <input type="hidden" name="_captcha" value="false">
                             <input type="hidden" name="_next" value="https://pertodecasa.onrender.com/">
-                            <div class="mb-4"><label class="fw-bold small text-muted text-uppercase mb-2">Seu Nome</label><input type="text" name="name" class="form-control p-3" required></div>
-                            <div class="mb-4"><label class="fw-bold small text-muted text-uppercase mb-2">E-mail</label><input type="email" name="email" class="form-control p-3" required></div>
-                            <div class="mb-4"><label class="fw-bold small text-muted text-uppercase mb-2">Mensagem</label><textarea name="message" class="form-control p-3" rows="4" required></textarea></div>
-                            <button type="submit" class="btn-enviar shadow">ENVIAR MENSAGEM</button>
+                            <div class="mb-4"><label class="fw-bold small text-muted">SEU NOME</label><input type="text" name="name" class="form-control" style="border-radius: 12px;" required></div>
+                            <div class="mb-4"><label class="fw-bold small text-muted">E-MAIL</label><input type="email" name="email" class="form-control" style="border-radius: 12px;" required></div>
+                            <div class="mb-4"><label class="fw-bold small text-muted">MENSAGEM</label><textarea name="message" class="form-control" style="border-radius: 12px;" rows="4" required></textarea></div>
+                            <button type="submit" class="btn-enviar shadow">ENVIAR AGORA</button>
                         </form>
                     </div>
                 </div>

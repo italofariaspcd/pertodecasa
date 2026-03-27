@@ -20,6 +20,6 @@ class Profissional(Base):
     descricao = Column(String)
     categoria_id = Column(Integer, ForeignKey("categorias.id"))
     ativo = Column(Boolean, default=True)
-    is_destaque = Column(Boolean, default=False) # NOVO: Para o Carrossel
+    is_destaque = Column(Boolean, default=False) # Habilita o Carrossel Superior
 
     categoria = relationship("Categoria", back_populates="profissionais")

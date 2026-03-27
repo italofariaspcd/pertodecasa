@@ -2,13 +2,31 @@ from database import SessionLocal, engine
 import models
 from models import Base, Categoria, Profissional
 
-# 1. Recria as tabelas para garantir a coluna 'is_destaque'
+# --- 1. CONFIGURAÇÃO INICIAL ---
+# metadata.create_all garante que as tabelas e a nova coluna is_destaque existam
 Base.metadata.create_all(bind=engine)
+
+# Lista Oficial das 75 Cidades de Sergipe
+lista_cidades_se = [
+    "Amparo de São Francisco", "Aquidabã", "Aracaju", "Arauá", "Areia Branca", "Barra dos Coqueiros", 
+    "Boquim", "Brejo Grande", "Campo do Brito", "Canhoba", "Canindé de São Francisco", "Capela", 
+    "Carira", "Carmópolis", "Cedro de São João", "Cristinápolis", "Cumbe", "Divina Pastora", 
+    "Estância", "Feira Nova", "Frei Paulo", "Gararu", "General Maynard", "Gracho Cardoso", 
+    "Ilha das Flores", "Indiaroba", "Itabaiana", "Itabaianinha", "Itaporanga d'Ajuda", "Japaratuba", 
+    "Japoatã", "Lagarto", "Laranjeiras", "Macambira", "Malhada dos Bois", "Malhador", 
+    "Maruim", "Moita Bonita", "Monte Alegre de Sergipe", "Muribeca", "Neópolis", "Nossa Senhora da Glória", 
+    "Nossa Senhora das Dores", "Nossa Senhora de Lourdes", "Nossa Senhora do Socorro", "Pacatuba", 
+    "Pedra Mole", "Pedrinhas", "Pinhão", "Pirambu", "Poço Redondo", "Poço Verde", "Porto da Folha", 
+    "Propriá", "Riachão do Dantas", "Riachuelo", "Ribeirópolis", "Rosário do Catete", "Salgado", 
+    "Santa Luzia do Itanhy", "Santa Rosa de Lima", "Santana do São Francisco", "Santo Amaro das Brotas", 
+    "São Cristóvão", "São Domingos", "São Francisco", "São Miguel do Aleixo", "Simão Dias", 
+    "Siriri", "Telha", "Tobias Barreto", "Tomar do Geru", "Umbaúba"
+]
 
 def popular_sistema():
     db = SessionLocal()
     
-    # LISTA MESTRE - 502 CATEGORIAS EM ORDEM ALFABÉTICA
+    # --- 2. LISTA MESTRE DE 502 CATEGORIAS ---
     categorias_cruas = [
         "Açougueiro", "Adestrador de Cães", "Administrador de Condomínios", "Advogado(a) Cível", 
         "Advogado(a) Criminalista", "Advogado(a) Trabalhista", "Afiador de Ferramentas", "Agente de Viagens", 
@@ -52,7 +70,7 @@ def popular_sistema():
         "Comercialização de Grãos", "Comissário de Bordo", "Composição Musical", "Comprador Pessoal (Personal Shopper)", 
         "Comunicação Visual", "Confeiteiro(a)", "Configuração de Roteador", "Conserto de Ar Condicionado", 
         "Conserto de Bicicleta Elétrica", "Conserto de Brinquedos", "Conserto de Câmera Fotográfica", "Conserto de Esteira Ergométrica", 
-        "Conserto de Fogão", "Conserto de Geladeira", "Conserto de Máquina de Costura", "Conserto de Máquina de Lavar", 
+        "Conserto de Fogão", "Conserto de Geladeira", "Conserto de Máquina de Lavar", 
         "Conserto de Microondas", "Conserto de Óculos", "Conserto de Piscina", "Conserto de Relógio", 
         "Consultor de Imagem", "Consultor de Marketing", "Consultor de Moda", "Consultor de TI", 
         "Consultor de Vendas", "Consultoria Ambiental", "Consultoria de RH", "Consultoria de Segurança", 
@@ -153,12 +171,10 @@ def popular_sistema():
         "Outros"
     ]
 
-    print("Sincronizando categorias em ordem alfabética... 🌵")
+    print("🚀 Sincronizando categorias... 🌵")
     
-    # Processamento da lista: Remove duplicatas e ordena
+    # Processa e ordena alfabeticamente
     lista_final = sorted(list(set(categorias_cruas)))
-    
-    # Garante que 'Outros' fique sempre no final
     if "Outros" in lista_final:
         lista_final.remove("Outros")
     lista_final.append("Outros")
@@ -168,34 +184,52 @@ def popular_sistema():
             db.add(Categoria(nome=nome))
     db.commit()
 
-    # CRIAÇÃO DE EXEMPLOS PARA O CARROSSEL (DESTAQUES)
-    cat_eletricista = db.query(Categoria).filter_by(nome="Eletricista Residencial").first()
-    cat_pintor = db.query(Categoria).filter_by(nome="Pintor Decorativo").first()
+    # --- 3. CRIAR PROFISSIONAIS DE DESTAQUE (PARA O CARROSSEL) ---
+    print("⭐ Gerando profissionais de destaque para teste...")
     
-    if cat_eletricista and cat_pintor:
-        print("Adicionando profissionais de destaque para o carrossel... ⭐")
-        exemplos = [
-            {"nome": "Caju Valley Elétrica", "cidade": "Aracaju", "cat": cat_eletricista.id},
-            {"nome": "Pinturas Terracota", "cidade": "Itabaiana", "cat": cat_pintor.id},
-            {"nome": "Suporte Tech SE", "cidade": "Capela", "cat": cat_eletricista.id}
-        ]
-        
-        for p in exemplos:
-            if not db.query(Profissional).filter_by(nome=p["nome"]).first():
-                novo_p = Profissional(
-                    nome=p["nome"],
-                    telefone="79999999999",
-                    cidade=p["cidade"],
-                    descricao="Profissional certificado com anos de experiência em Sergipe.",
-                    endereco="Rua Principal",
-                    numero="01",
-                    categoria_id=p["cat"],
-                    is_destaque=True # Essencial para o carrossel
-                )
-                db.add(novo_p)
-        db.commit()
+    cat_eletricista = db.query(Categoria).filter_by(nome="Eletricista Residencial").first()
+    cat_confeiteiro = db.query(Categoria).filter_by(nome="Confeiteiro(a)").first()
+    cat_informatica = db.query(Categoria).filter_by(nome="Técnico em Informática").first()
+    
+    exemplos = [
+        {
+            "nome": "Caju Valley Elétrica", 
+            "telefone": "79999999999", 
+            "cidade": "Aracaju", 
+            "desc": "Instalações elétricas residenciais e comerciais com garantia.",
+            "cat_id": cat_eletricista.id if cat_eletricista else 1
+        },
+        {
+            "nome": "Bolos da Terra", 
+            "telefone": "79888888888", 
+            "cidade": "Itabaiana", 
+            "desc": "Bolos artesanais, doces gourmet e encomendas para festas.",
+            "cat_id": cat_confeiteiro.id if cat_confeiteiro else 1
+        },
+        {
+            "nome": "Mestre dos PCs", 
+            "telefone": "79777777777", 
+            "cidade": "Nossa Senhora do Socorro", 
+            "desc": "Formatação, remoção de vírus e montagem de computadores gamer.",
+            "cat_id": cat_informatica.id if cat_informatica else 1
+        }
+    ]
 
-    print(f"Sucesso! {len(lista_final)} categorias e profissionais de destaque sincronizados. 🚀")
+    for p in exemplos:
+        if not db.query(Profissional).filter_by(nome=p["nome"]).first():
+            db.add(Profissional(
+                nome=p["nome"],
+                telefone=p["telefone"],
+                cidade=p["cidade"],
+                descricao=p["desc"],
+                endereco="Rua Principal",
+                numero="100",
+                categoria_id=p["cat_id"],
+                is_destaque=True # Essencial para aparecer no carrossel superior
+            ))
+    
+    db.commit()
+    print(f"✅ Sucesso! {len(lista_final)} categorias e destaques sincronizados.")
     db.close()
 
 if __name__ == "__main__":
