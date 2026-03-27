@@ -13,6 +13,11 @@ templates = Jinja2Templates(directory="templates")
 
 ADMIN_PASS = "Cica29xl!@"
 
+# Rota técnica para o Cron Job (Uptime Robot / Render)
+@app.get("/healthcheck")
+def healthcheck():
+    return {"status": "online", "message": "Perto de Casa SE acordado!"}
+
 @app.get("/")
 def home(request: Request, q: str = None, db: Session = Depends(database.get_db)):
     destaques = db.query(models.Profissional).filter(models.Profissional.ativo == True, models.Profissional.is_destaque == True).order_by(func.random()).limit(6).all()
@@ -53,7 +58,7 @@ def painel_admin(request: Request, senha: str = Form(...), db: Session = Depends
 def deletar(id: int, db: Session = Depends(database.get_db)):
     prof = db.query(models.Profissional).get(id)
     if prof: db.delete(prof); db.commit()
-    return RedirectResponse(url="/login-admin", status_code=303) # Redireciona ao login para reautenticar (segurança simples)
+    return RedirectResponse(url="/login-admin", status_code=303)
 
 @app.get("/contato")
 def contato(request: Request):
