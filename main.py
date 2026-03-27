@@ -8,29 +8,28 @@ import models, database
 from seed import LISTA_CIDADES_SE
 
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key="caju-valley-final-master")
+app.add_middleware(SessionMiddleware, secret_key="caju-valley-final-2026-master")
 templates = Jinja2Templates(directory="templates")
 
 ADMIN_PASS = "Cica29xl!@"
 
 @app.get("/healthcheck")
 def healthcheck():
-    return {"status": "online", "service": "Perto de Casa SE"}
+    return {"status": "online", "message": "Perto de Casa SE Ativo"}
 
 @app.get("/")
 def home(request: Request, q: str = None, db: Session = Depends(database.get_db)):
-    # Busca destaques aleatórios para o carrossel
     destaques = db.query(models.Profissional).filter(models.Profissional.ativo == True, models.Profissional.is_destaque == True).order_by(func.random()).limit(6).all()
     profissionais = []
     if q:
-        # Busca inteligente: Nome, Descrição, Cidade ou Nome da Categoria
+        q_limpo = q.strip()
         profissionais = db.query(models.Profissional).join(models.Categoria).filter(
             models.Profissional.ativo == True,
             or_(
-                models.Profissional.nome.ilike(f"%{q}%"),
-                models.Profissional.descricao.ilike(f"%{q}%"),
-                models.Profissional.cidade.ilike(f"%{q}%"),
-                models.Categoria.nome.ilike(f"%{q}%")
+                models.Profissional.nome.ilike(f"%{q_limpo}%"),
+                models.Profissional.descricao.ilike(f"%{q_limpo}%"),
+                models.Profissional.cidade.ilike(f"%{q_limpo}%"),
+                models.Categoria.nome.ilike(f"%{q_limpo}%")
             )
         ).all()
     return templates.TemplateResponse("index.html", {"request": request, "profissionais": profissionais, "destaques": destaques, "termo_busca": q, "msg": request.session.pop("msg", None)})
@@ -46,7 +45,7 @@ def salvar_anuncio(request: Request, nome: str = Form(...), telefone: str = Form
         novo = models.Profissional(nome=nome, telefone=telefone, cidade=cidade, endereco=endereco, numero=numero, categoria_id=categoria_id, descricao=descricao, redes_sociais=redes_sociais)
         db.add(novo)
         db.commit()
-        request.session["msg"] = "Cadastro enviado com sucesso! Aguarde ativação."
+        request.session["msg"] = "Enviado com sucesso! Aguarde ativação via WhatsApp."
         return RedirectResponse(url="/", status_code=303)
     except Exception:
         db.rollback()
@@ -59,7 +58,7 @@ def login_admin(request: Request):
 @app.post("/painel-admin")
 def painel_admin(request: Request, senha: str = Form(...), db: Session = Depends(database.get_db)):
     if senha != ADMIN_PASS:
-        return templates.TemplateResponse("login_admin.html", {"request": request, "erro": "Senha Incorreta!"})
+        return templates.TemplateResponse("login_admin.html", {"request": request, "erro": "Senha incorreta!"})
     profs = db.query(models.Profissional).all()
     return templates.TemplateResponse("admin.html", {"request": request, "profissionais": profs})
 
