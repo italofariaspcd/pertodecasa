@@ -16,10 +16,10 @@ class Profissional(Base):
     redes_sociais = Column(String, nullable=True) # Instagram
     endereco = Column(String)
     numero = Column(String)
-    cidade = Column(String)
+    cidade = Column(String, index=True)
     descricao = Column(String)
     categoria_id = Column(Integer, ForeignKey("categorias.id"))
     ativo = Column(Boolean, default=True)
-    is_destaque = Column(Boolean, default=False)
+    is_destaque = Column(Boolean, default=False) # Para o Carrossel da Home
 
     categoria = relationship("Categoria", back_populates="profissionais")

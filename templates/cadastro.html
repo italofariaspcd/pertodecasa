@@ -9,29 +9,26 @@
         body { background-color: var(--fundo); padding: 40px 0; font-size: 16px; }
         .card-cadastro { border-radius: 30px; border: none; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
         .form-control, .form-select { border-radius: 12px; padding: 15px; border: 1px solid #ddd; }
-        .btn-salvar { background: #a7bc72; color: white; font-weight: bold; border-radius: 15px; padding: 18px; border: none; width: 100%; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="text-center mb-4"><a href="/" class="btn btn-outline-dark rounded-pill px-4 fw-bold">← VOLTAR AO INÍCIO</a></div>
-        <div class="card card-cadastro mx-auto" style="max-width: 850px;"><div class="card-body p-4 p-md-5 bg-white rounded-5">
-            <h2 class="fw-bold mb-4 text-center" style="color: var(--terracota);">Criar Meu Anúncio</h2>
-            <form action="/cadastrar-anuncio" method="POST">
-                <div class="mb-4"><label class="fw-bold small text-muted">NOME PROFISSIONAL</label><input type="text" name="nome" class="form-control" required></div>
-                <div class="row"><div class="col-md-6 mb-4"><label class="fw-bold small text-muted">WHATSAPP (DDD)</label><input type="tel" name="telefone" class="form-control" placeholder="799..." required></div><div class="col-md-6 mb-4"><label class="fw-bold small text-muted">INSTAGRAM</label><input type="text" name="redes_sociais" class="form-control" placeholder="@seu.perfil"></div></div>
-                <div class="row"><div class="col-8 col-md-9 mb-4"><label class="fw-bold small text-muted">LOGRADOURO/RUA</label><input type="text" name="endereco" class="form-control" required></div><div class="col-4 col-md-3 mb-4"><label class="fw-bold small text-muted">Nº</label><input type="text" name="numero" class="form-control" required></div></div>
-                <div class="mb-4"><label class="fw-bold small text-muted">CIDADE EM SERGIPE</label><select name="cidade" class="form-select" required><option value="">Selecione...</option>{% for c in cidades %}<option value="{{ c }}">{{ c }}</option>{% endfor %}</select></div>
-                <div class="mb-4"><label class="fw-bold small text-muted">CATEGORIA</label><select name="categoria_id" class="form-select" required>{% for cat in categorias %}<option value="{{ cat.id }}">{{ cat.nome }}</option>{% endfor %}</select></div>
-                <div class="mb-4"><label class="fw-bold small text-muted">DESCRIÇÃO DOS SERVIÇOS</label><textarea name="descricao" class="form-control" rows="4" placeholder="Ex: Atendimento domiciliar, aceito cartão..." required></textarea></div>
-                
-                <div class="alert mb-4 border-0" style="background: #fff8f0; color: #953d15; border-radius: 15px; font-size: 0.9rem;">
-                    <b>⚠️ CIÊNCIA DE COBRANÇA:</b> Este anúncio possui uma taxa de <b>R$ 10,00 mensal</b> para manutenção na plataforma. Em caso de falta de pagamento, o anúncio será suspenso imediatamente. As cobranças e suporte técnico serão realizados via WhatsApp.
-                    <div class="mt-2"><input type="checkbox" required> Estou ciente e aceito os termos.</div>
-                </div>
-                <button type="submit" class="btn-salvar shadow-lg">FINALIZAR E ANUNCIAR</button>
-            </form>
-        </div></div>
-    </div>
+    <div class="container text-center mb-4"><a href="/" class="btn btn-outline-dark rounded-pill px-4 fw-bold shadow-sm">← VOLTAR AO INÍCIO</a></div>
+    <div class="container"><div class="card card-cadastro mx-auto" style="max-width: 850px;"><div class="card-body p-4 p-md-5 bg-white rounded-5">
+        <h2 class="fw-bold mb-4 text-center" style="color: var(--terracota);">Cadastrar Meu Anúncio</h2>
+        <form action="/cadastrar-anuncio" method="POST">
+            <div class="mb-4"><label class="fw-bold small text-muted">NOME DO PROFISSIONAL / NEGÓCIO</label><input type="text" name="nome" class="form-control" required></div>
+            <div class="row"><div class="col-md-6 mb-4"><label class="fw-bold small text-muted">WHATSAPP (COM DDD)</label><input type="tel" name="telefone" class="form-control" placeholder="799..." required></div><div class="col-md-6 mb-4"><label class="fw-bold small text-muted">INSTAGRAM</label><input type="text" name="redes_sociais" class="form-control" placeholder="@seu.perfil"></div></div>
+            <div class="row"><div class="col-8 col-md-9 mb-4"><label class="fw-bold small text-muted">LOGRADOURO/RUA</label><input type="text" name="endereco" class="form-control" required></div><div class="col-4 col-md-3 mb-4"><label class="fw-bold small text-muted">Nº</label><input type="text" name="numero" class="form-control" required></div></div>
+            <div class="mb-4"><label class="fw-bold small text-muted">CIDADE</label><select name="cidade" class="form-select" required><option value="">Selecione...</option>{% for c in cidades %}<option value="{{ c }}">{{ c }}</option>{% endfor %}</select></div>
+            <div class="mb-4"><label class="fw-bold small text-muted">CATEGORIA</label><select name="categoria_id" class="form-select" required>{% for cat in categorias %}<option value="{{ cat.id }}">{{ cat.nome }}</option>{% endfor %}</select></div>
+            <div class="mb-4"><label class="fw-bold small text-muted">DESCRIÇÃO DOS SERVIÇOS</label><textarea name="descricao" class="form-control" rows="4" placeholder="Fale sobre seu trabalho..." required></textarea></div>
+            
+            <div class="alert mb-4 border-0 shadow-sm" style="background: #fff8f0; color: #953d15; border-radius: 15px; font-size: 0.9rem;">
+                <b>⚠️ TERMOS E COBRANÇA:</b> Este anúncio possui uma taxa fixa de <b>R$ 10,00 mensal</b>. O não pagamento resultará na suspensão imediata do anúncio. Todas as cobranças e o suporte são realizados via WhatsApp.
+                <div class="mt-2"><input type="checkbox" required> Estou ciente da cobrança e aceito os termos.</div>
+            </div>
+            <button type="submit" class="btn w-100 py-3 fw-bold text-white shadow" style="background: #a7bc72; border-radius: 15px; border: none;">FINALIZAR E ANUNCIAR</button>
+        </form>
+    </div></div></div>
 </body>
 </html>
