@@ -12,7 +12,7 @@
         .card-cadastro { border-radius: 30px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.12); margin-top: 20px; width: 100%; }
         .form-control, .form-select { border-radius: 15px; padding: 18px; border: 2px solid #ddd; font-size: 16px; }
         .btn-salvar { background: var(--oliva); color: white; font-weight: bold; border-radius: 20px; padding: 20px; border: none; font-size: 1.2rem; width: 100%; }
-        .rodape { background-color: #d8cbb3; color: #5d4037; border-top: 2px solid var(--terracota); padding: 30px 0; text-align: center; margin-top: auto; }
+        .rodape { background-color: #d8cbb3; color: #5d4037; border-top: 2px solid var(--terracota); padding: 40px 0; text-align: center; margin-top: auto; }
     </style>
 </head>
 <body>
@@ -23,14 +23,14 @@
         </div>
     </nav>
     <div class="container py-4 flex-grow-1">
-        <div class="card card-cadastro mx-auto" style="max-width: 800px;">
+        <div class="card card-cadastro mx-auto" style="max-width: 850px;">
             <div class="card-body p-4 p-md-5 bg-white">
                 <h2 class="fw-bold mb-4 text-center" style="color: var(--terracota);">Anunciar Meu Serviço</h2>
                 <form action="/cadastrar" method="POST">
                     <div class="mb-4"><label class="fw-bold small text-muted">NOME PROFISSIONAL</label><input type="text" class="form-control" name="nome" required></div>
                     <div class="row">
                         <div class="col-md-6 mb-4"><label class="fw-bold small text-muted">WHATSAPP</label><input type="tel" class="form-control" name="telefone" required></div>
-                        <div class="col-md-6 mb-4"><label class="fw-bold small text-muted">INSTAGRAM</label><input type="text" class="form-control" name="redes_sociais" placeholder="@seuperfil"></div>
+                        <div class="col-md-6 mb-4"><label class="fw-bold small text-muted">INSTAGRAM (@...)</label><input type="text" class="form-control" name="redes_sociais"></div>
                     </div>
                     <div class="row">
                         <div class="col-8 col-md-9 mb-4"><label class="fw-bold small text-muted">RUA / LOGRADOURO</label><input type="text" class="form-control" name="endereco" required></div>
@@ -46,11 +46,11 @@
                             {% for cat in categorias %}<option value="{{ cat.id }}">{{ cat.nome }}</option>{% endfor %}
                         </select>
                     </div>
-                    <div class="mb-4"><label class="fw-bold small text-muted">DESCRIÇÃO</label><textarea class="form-control" name="descricao" rows="4" placeholder="Fale sobre seu trabalho..." required></textarea></div>
+                    <div class="mb-4"><label class="fw-bold small text-muted">DESCRIÇÃO</label><textarea class="form-control" name="descricao" rows="4" placeholder="Fale sobre seus serviços..." required></textarea></div>
                     <div class="alert mb-4 border-0" style="background: #fff8f0; color: #953d15; border-radius: 20px;">
-                        <input type="checkbox" required> Ciente da taxa de <b>R$ 10,00 mensal</b> para manter o anúncio.
+                        <input type="checkbox" required> Ciente da taxa de <b>R$ 10,00 mensal</b>.
                     </div>
-                    <button type="submit" class="btn-salvar shadow-lg">FINALIZAR E PUBLICAR</button>
+                    <button type="submit" class="btn-salvar shadow-lg">PUBLICAR ANÚNCIO</button>
                 </form>
             </div>
         </div>

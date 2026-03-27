@@ -10,14 +10,14 @@ from database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key="caju-valley-v3-final-boss")
+app.add_middleware(SessionMiddleware, secret_key="caju-valley-v3-final")
 templates = Jinja2Templates(directory="templates")
 
 ADMIN_PASSWORD = "Cica29xl!@"
 
 @app.get("/")
 def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db)):
-    # Busca 6 profissionais aleatórios marcados como destaque
+    # 1. Carrega Profissionais em Destaque (is_destaque=True)
     destaque_list = db.query(models.Profissional).filter(
         models.Profissional.ativo == True,
         models.Profissional.is_destaque == True
@@ -34,7 +34,8 @@ def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db
             or_(
                 models.Profissional.nome.ilike(f"%{q}%"),
                 models.Profissional.descricao.ilike(f"%{q}%"),
-                models.Profissional.cidade.ilike(f"%{q}%")
+                models.Profissional.cidade.ilike(f"%{q}%"),
+                models.Profissional.endereco.ilike(f"%{q}%")
             )
         ).all()
         
@@ -43,26 +44,25 @@ def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db
         "termo_busca": q, "buscou": buscou, "mensagem_sucesso": sucesso
     })
 
+# 3. Rota para Orçamento Coletivo
 @app.post("/orcamento-coletivo")
 def orcamento_coletivo(request: Request, cidade: str = Form(...), servico: str = Form(...)):
-    # Redireciona para a busca combinada
-    return RedirectResponse(url=f"/?q={servico} {cidade}", status_code=303)
+    busca = f"{servico} {cidade}"
+    return RedirectResponse(url=f"/?q={busca}", status_code=303)
 
 @app.get("/cadastro")
 def form_cadastro(request: Request, db: Session = Depends(get_db)):
     categorias = db.query(models.Categoria).order_by(models.Categoria.nome).all()
-    # Importação dinâmica das cidades do seed para evitar repetição de código
+    # Importação manual da lista para o cadastro
     from seed import lista_cidades_se
-    return templates.TemplateResponse("cadastro.html", {
-        "request": request, "categorias": categorias, "cidades": sorted(lista_cidades_se)
-    })
+    return templates.TemplateResponse("cadastro.html", {"request": request, "categorias": categorias, "cidades": sorted(lista_cidades_se)})
 
 @app.post("/cadastrar")
 def salvar_cadastro(request: Request, nome: str = Form(...), telefone: str = Form(...), redes_sociais: str = Form(None), endereco: str = Form(...), numero: str = Form(...), cidade: str = Form(...), descricao: str = Form(...), categoria_id: int = Form(...), db: Session = Depends(get_db)):
     novo = models.Profissional(nome=nome, telefone=telefone, redes_sociais=redes_sociais, endereco=endereco, numero=numero, cidade=cidade, descricao=descricao, categoria_id=categoria_id)
     db.add(novo)
     db.commit()
-    request.session["mensagem_sucesso"] = "Cadastro enviado com sucesso! Aguarde ativação via WhatsApp."
+    request.session["mensagem_sucesso"] = "Cadastro enviado! Aguarde contato via WhatsApp."
     return RedirectResponse(url="/", status_code=303)
 
 @app.get("/contato")

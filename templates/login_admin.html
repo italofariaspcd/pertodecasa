@@ -9,14 +9,12 @@
         :root { --terracota: #953d15; --caramelo: #c57d4c; --fundo-dark: #e8dcc4; }
         body { background-color: var(--fundo-dark); min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
         .card-login { border-radius: 30px; border: none; box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
-        .btn-entrar { background: var(--terracota); color: white; font-weight: bold; border-radius: 15px; padding: 15px; border: none; width: 100%; }
-        .form-control { border-radius: 12px; border: 2px solid #d8cbb3; padding: 12px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-11 col-sm-8 col-md-5 col-lg-4">
+            <div class="col-11 col-md-5 col-lg-4">
                 <div class="card card-login overflow-hidden">
                     <div class="card-header py-4 text-center text-white border-0" style="background-color: #2d1a12;">
                         <h5 class="mb-0 fw-bold">🔐 ACESSO RESTRITO</h5>
@@ -26,10 +24,10 @@
                         <form action="/admin" method="POST">
                             <div class="mb-4">
                                 <label class="fw-bold small text-muted text-uppercase mb-2">Chave de Acesso</label>
-                                <input type="password" name="senha" class="form-control" placeholder="••••••••" required>
+                                <input type="password" name="senha" class="form-control p-3" style="border-radius: 12px;" placeholder="••••••••" required>
                             </div>
-                            <button type="submit" class="btn-entrar shadow">ENTRAR</button>
-                            <div class="text-center mt-4"><a href="/" class="text-muted small text-decoration-none fw-bold">← VOLTAR AO SITE</a></div>
+                            <button type="submit" class="btn w-100 py-3 fw-bold text-white shadow" style="background: var(--terracota); border-radius: 15px;">ENTRAR NO PAINEL</button>
+                            <div class="text-center mt-4"><a href="/" class="text-muted small text-decoration-none fw-bold">← VOLTAR</a></div>
                         </form>
                     </div>
                 </div>
