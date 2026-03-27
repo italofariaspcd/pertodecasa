@@ -13,7 +13,7 @@ class Profissional(Base):
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String, index=True)
     telefone = Column(String)
-    redes_sociais = Column(String, nullable=True) # Instagram
+    redes_sociais = Column(String, nullable=True)
     endereco = Column(String)
     numero = Column(String)
     cidade = Column(String)

@@ -20,10 +20,8 @@ LISTA_CIDADES_SE = [
     "Siriri", "Telha", "Tobias Barreto", "Tomar do Geru", "Umbaúba"
 ]
 
-def popular_sistema():
-    db = SessionLocal()
-    # Adicione suas 502 categorias aqui
-    categorias_cruas = [ "Açougueiro", "Adestrador de Cães", "Administrador de Condomínios", "Advogado(a) Cível", 
+CATEGORIAS_MASTER = [
+        "Açougueiro", "Adestrador de Cães", "Administrador de Condomínios", "Advogado(a) Cível", 
         "Advogado(a) Criminalista", "Advogado(a) Trabalhista", "Afiador de Ferramentas", "Agente de Viagens", 
         "Agrônomo", "Ajudante de Mudança", "Alinhamento e Balanceamento", "Aluguel de Brinquedos", 
         "Aluguel de Carros", "Aluguel de Equipamentos", "Aluguel de Roupas de Festa", "Amestrador de Aves", 
@@ -163,19 +161,24 @@ def popular_sistema():
         "Vidraceiro Temperado", "Vigilante", "Violoncelista", "Violonista", 
         "Vocalista", "Voz e Violão", "Web Designer", "Web Developer", 
         "Wine Consultant (Sommelier)", "Yoga", "Zelador", "Zootecnista", 
-        "Outros"] 
-    
-    lista_final = sorted(list(set(categorias_cruas)))
-    if "Outros" in lista_final: lista_final.remove("Outros")
+        "Outros"
+    # Adicione as demais categorias conforme sua lista de 500+
+]
+
+def popular_sistema():
+    db = SessionLocal()
+    print("🚀 Sincronizando categorias em Sergipe... 🌵")
+    lista_final = sorted(list(set(CATEGORIAS_MASTER)))
+    if "Outros" in lista_final:
+        lista_final.remove("Outros")
     lista_final.append("Outros")
 
-    print("🚀 Sincronizando Banco de Dados... 🌵")
     for nome in lista_final:
         if not db.query(Categoria).filter_by(nome=nome).first():
             db.add(Categoria(nome=nome))
     db.commit()
     db.close()
-    print("✅ Banco pronto!")
+    print("✅ Banco pronto para uso!")
 
 if __name__ == "__main__":
     popular_sistema()

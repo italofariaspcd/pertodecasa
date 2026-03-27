@@ -12,21 +12,22 @@
         .card-prof { border-radius: 25px; border-left: 10px solid var(--oliva); background: white; margin-bottom: 25px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         .search-container { background: white; border-radius: 50px; padding: 8px; border: 2px solid var(--caramelo); }
         .btn-float { position: fixed; bottom: 30px; right: 20px; background: var(--terracota); color: white; border-radius: 50px; padding: 16px 28px; font-weight: bold; border: none; z-index: 999; }
+        .rodape { background: #2d1a12; color: #e8dcc4; padding: 40px 0; text-align: center; margin-top: auto; }
     </style>
 </head>
 <body>
-    <nav class="nav-premium sticky-top shadow"><div class="container d-flex justify-content-between align-items-center">
+    <nav class="nav-premium sticky-top shadow"><div class="container d-flex justify-content-between align-items-center px-3">
         <a href="/" class="text-white text-decoration-none fw-bold fs-4">📍 Perto de Casa SE</a>
-        <div class="d-flex gap-2"><a href="/contato" class="btn btn-sm text-white fw-bold">Suporte</a><a href="/cadastro" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">Anunciar</a></div>
+        <div class="d-flex gap-2"><a href="/contato" class="btn btn-sm text-white fw-bold">Suporte</a><a href="/cadastro" class="btn btn-light rounded-pill px-4 fw-bold">Anunciar</a></div>
     </div></nav>
 
-    <div class="container py-4 flex-grow-1">
+    <div class="container py-4 flex-grow-1 px-3">
         {% if msg %}<div class="alert alert-success text-center border-0 rounded-4 mb-4" style="background: var(--oliva); color: white;">{{ msg }}</div>{% endif %}
 
         <div class="text-center mb-5"><h1 class="display-6 fw-bold mb-4" style="color: var(--terracota);">O que Sergipe procura hoje?</h1>
             <div class="search-container mx-auto" style="max-width: 600px;">
                 <form action="/" method="GET" class="d-flex align-items-center">
-                    <input type="text" id="q" name="q" class="form-control border-0 bg-transparent shadow-none" placeholder="Ex: Pedreiro, TI, Saúde..." value="{{ termo_busca or '' }}" required>
+                    <input type="text" id="q" name="q" class="form-control border-0 bg-transparent shadow-none" placeholder="Ex: Pedreiro, TI, Aracaju..." value="{{ termo_busca or '' }}" required>
                     <button type="button" onclick="ativarGPS()" class="btn border-0">📍</button>
                     <button type="submit" class="btn rounded-pill px-4 fw-bold text-white shadow-sm" style="background: var(--caramelo);">BUSCAR</button>
                 </form>
@@ -36,21 +37,25 @@
         <div class="mx-auto" style="max-width: 750px;">
             {% for p in profissionais %}
             <div class="card card-prof p-4">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div><h4 class="fw-bold mb-0" style="color: var(--terracota);">{{ p.nome }}</h4><span class="badge bg-light text-dark border rounded-pill mt-1">🏷️ {{ p.categoria.nome }}</span></div>
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h4 class="fw-bold mb-0" style="color: var(--terracota);">{{ p.nome }}</h4>
                     <span class="small fw-bold">📍 {{ p.cidade }}</span>
                 </div>
-                <p class="text-secondary">{{ p.descricao }}</p>
-                <div class="small mb-4 text-muted">🏠 {{ p.endereco }}, {{ p.numero }}</div>
+                <div class="badge bg-light text-dark border mb-3">🏷️ {{ p.categoria.nome }}</div>
+                <p class="text-secondary mb-3">{{ p.descricao }}</p>
+                <div class="small text-muted mb-4">🏠 {{ p.endereco }}, {{ p.numero }}</div>
                 <a href="https://wa.me/55{{ p.telefone }}" class="btn w-100 fw-bold py-3 text-white shadow" style="background: var(--oliva); border-radius: 50px;">CHAMAR NO WHATSAPP</a>
             </div>
             {% endfor %}
         </div>
     </div>
 
-    <button class="btn-float shadow-lg" data-bs-toggle="modal" data-bs-target="#m">📝 Pedido Coletivo</button>
-    
-    <footer class="text-center py-4" style="background: #d8cbb3; color: #5d4037; border-top: 2px solid var(--terracota);">Caju Valley Tecnologia • Sergipe 🌵</footer>
+    <button class="btn-float shadow-lg" data-bs-toggle="modal" data-bs-target="#m">📝 Orçamento</button>
+
+    <footer class="rodape">
+        <p class="mb-1 fw-bold">Caju Valley Tecnologia 🌵</p>
+        <p class="mb-0 small">@pertodecasase • Sergipe 2026</p>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>function ativarGPS(){ if(navigator.geolocation){ navigator.geolocation.getCurrentPosition(p=>{ fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${p.coords.latitude}&lon=${p.coords.longitude}`).then(r=>r.json()).then(d=>{ document.getElementById('q').value = d.address.city || d.address.town || ""; }); }); }}</script>
