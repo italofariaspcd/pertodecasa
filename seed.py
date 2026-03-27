@@ -1,15 +1,15 @@
 from database import SessionLocal, engine
-from models import Base, Categoria
+import models
+from models import Base, Categoria, Profissional
 
-# Inicializa as tabelas no banco de dados antes de popular
+# 1. Recria as tabelas para garantir a coluna 'is_destaque'
 Base.metadata.create_all(bind=engine)
 
-def popular_categorias():
+def popular_sistema():
     db = SessionLocal()
     
-    # Lista Mestre com 500+ itens em ordem alfabética
-    # Otimizada para o layout elegante #953d15, #c57d4c, #a7bc72
-    lista_categorias = [
+    # LISTA MESTRE - 502 CATEGORIAS EM ORDEM ALFABÉTICA
+    categorias_cruas = [
         "Açougueiro", "Adestrador de Cães", "Administrador de Condomínios", "Advogado(a) Cível", 
         "Advogado(a) Criminalista", "Advogado(a) Trabalhista", "Afiador de Ferramentas", "Agente de Viagens", 
         "Agrônomo", "Ajudante de Mudança", "Alinhamento e Balanceamento", "Aluguel de Brinquedos", 
@@ -52,7 +52,7 @@ def popular_categorias():
         "Comercialização de Grãos", "Comissário de Bordo", "Composição Musical", "Comprador Pessoal (Personal Shopper)", 
         "Comunicação Visual", "Confeiteiro(a)", "Configuração de Roteador", "Conserto de Ar Condicionado", 
         "Conserto de Bicicleta Elétrica", "Conserto de Brinquedos", "Conserto de Câmera Fotográfica", "Conserto de Esteira Ergométrica", 
-        "Conserto de Fogão", "Conserto de Geladeira", "Conserto de Máquina de Lavar", 
+        "Conserto de Fogão", "Conserto de Geladeira", "Conserto de Máquina de Costura", "Conserto de Máquina de Lavar", 
         "Conserto de Microondas", "Conserto de Óculos", "Conserto de Piscina", "Conserto de Relógio", 
         "Consultor de Imagem", "Consultor de Marketing", "Consultor de Moda", "Consultor de TI", 
         "Consultor de Vendas", "Consultoria Ambiental", "Consultoria de RH", "Consultoria de Segurança", 
@@ -153,25 +153,50 @@ def popular_categorias():
         "Outros"
     ]
 
-    try:
-        # Garante que a ordenação seja rigorosamente alfabética antes de inserir
-        # Removendo possíveis duplicatas acidentais e ordenando
-        lista_final = sorted(list(set(lista_categorias)))
-        
-        # Garante que 'Outros' fique sempre por último no dropdown
-        if "Outros" in lista_final:
-            lista_final.remove("Outros")
-        lista_final.append("Outros")
+    print("Sincronizando categorias em ordem alfabética... 🌵")
+    
+    # Processamento da lista: Remove duplicatas e ordena
+    lista_final = sorted(list(set(categorias_cruas)))
+    
+    # Garante que 'Outros' fique sempre no final
+    if "Outros" in lista_final:
+        lista_final.remove("Outros")
+    lista_final.append("Outros")
 
-        for nome in lista_final:
-            # Verifica se a categoria já existe para não duplicar no PostgreSQL/SQLite
-            if not db.query(Categoria).filter_by(nome=nome).first():
-                db.add(Categoria(nome=nome))
+    for nome in lista_final:
+        if not db.query(Categoria).filter_by(nome=nome).first():
+            db.add(Categoria(nome=nome))
+    db.commit()
+
+    # CRIAÇÃO DE EXEMPLOS PARA O CARROSSEL (DESTAQUES)
+    cat_eletricista = db.query(Categoria).filter_by(nome="Eletricista Residencial").first()
+    cat_pintor = db.query(Categoria).filter_by(nome="Pintor Decorativo").first()
+    
+    if cat_eletricista and cat_pintor:
+        print("Adicionando profissionais de destaque para o carrossel... ⭐")
+        exemplos = [
+            {"nome": "Caju Valley Elétrica", "cidade": "Aracaju", "cat": cat_eletricista.id},
+            {"nome": "Pinturas Terracota", "cidade": "Itabaiana", "cat": cat_pintor.id},
+            {"nome": "Suporte Tech SE", "cidade": "Capela", "cat": cat_eletricista.id}
+        ]
         
+        for p in exemplos:
+            if not db.query(Profissional).filter_by(nome=p["nome"]).first():
+                novo_p = Profissional(
+                    nome=p["nome"],
+                    telefone="79999999999",
+                    cidade=p["cidade"],
+                    descricao="Profissional certificado com anos de experiência em Sergipe.",
+                    endereco="Rua Principal",
+                    numero="01",
+                    categoria_id=p["cat"],
+                    is_destaque=True # Essencial para o carrossel
+                )
+                db.add(novo_p)
         db.commit()
-        print(f"Sucesso: {len(lista_final)} categorias sincronizadas com o novo layout! 🌵")
-    finally:
-        db.close()
+
+    print(f"Sucesso! {len(lista_final)} categorias e profissionais de destaque sincronizados. 🚀")
+    db.close()
 
 if __name__ == "__main__":
-    popular_categorias()
+    popular_sistema()

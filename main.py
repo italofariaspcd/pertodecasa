@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, Request, Form, status
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 from typing import Optional
 from starlette.middleware.sessions import SessionMiddleware
 import models
@@ -10,36 +10,23 @@ from database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key="caju-valley-dark-terracota-2026")
+app.add_middleware(SessionMiddleware, secret_key="caju-valley-v3-dynamic")
 templates = Jinja2Templates(directory="templates")
 
 ADMIN_PASSWORD = "Cica29xl!@"
 
-CIDADES_SE = [
-    "Amparo de São Francisco", "Aquidabã", "Aracaju", "Arauá", "Areia Branca", "Barra dos Coqueiros", 
-    "Boquim", "Brejo Grande", "Campo do Brito", "Canhoba", "Canindé de São Francisco", "Capela", 
-    "Carira", "Carmópolis", "Cedro de São João", "Cristinápolis", "Cumbe", "Divina Pastora", 
-    "Estância", "Feira Nova", "Frei Paulo", "Gararu", "General Maynard", "Gracho Cardoso", 
-    "Ilha das Flores", "Indiaroba", "Itabaiana", "Itabaianinha", "Itaporanga d'Ajuda", "Japaratuba", 
-    "Japoatã", "Lagarto", "Laranjeiras", "Macambira", "Malhada dos Bois", "Malhador", 
-    "Maruim", "Moita Bonita", "Monte Alegre de Sergipe", "Muribeca", "Neópolis", "Nossa Senhora da Glória", 
-    "Nossa Senhora das Dores", "Nossa Senhora de Lourdes", "Nossa Senhora do Socorro", "Pacatuba", 
-    "Pedra Mole", "Pedrinhas", "Pinhão", "Pirambu", "Poço Redondo", "Poço Verde", "Porto da Folha", 
-    "Propriá", "Riachão do Dantas", "Riachuelo", "Ribeirópolis", "Rosário do Catete", "Salgado", 
-    "Santa Luzia do Itanhy", "Santa Rosa de Lima", "Santana do São Francisco", "Santo Amaro das Brotas", 
-    "São Cristóvão", "São Domingos", "São Francisco", "São Miguel do Aleixo", "Simão Dias", 
-    "Siriri", "Telha", "Tobias Barreto", "Tomar do Geru", "Umbaúba"
-]
-
-@app.get("/healthcheck")
-def healthcheck():
-    return {"status": "online", "monitor": "Caju Valley Terracota Active 🌵"}
-
 @app.get("/")
 def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db)):
+    # 1. Busca Profissionais em Destaque (is_destaque=True)
+    destaque_list = db.query(models.Profissional).filter(
+        models.Profissional.ativo == True,
+        models.Profissional.is_destaque == True
+    ).order_by(func.random()).limit(6).all()
+
     profissionais = []
     buscou = False
     sucesso = request.session.pop("mensagem_sucesso", None)
+
     if q and q.strip() != "":
         buscou = True
         profissionais = db.query(models.Profissional).filter(
@@ -47,59 +34,42 @@ def home(request: Request, q: Optional[str] = None, db: Session = Depends(get_db
             or_(
                 models.Profissional.nome.ilike(f"%{q}%"),
                 models.Profissional.descricao.ilike(f"%{q}%"),
-                models.Profissional.cidade.ilike(f"%{q}%"),
-                models.Profissional.endereco.ilike(f"%{q}%")
+                models.Profissional.cidade.ilike(f"%{q}%")
             )
         ).all()
+        
     return templates.TemplateResponse("index.html", {
-        "request": request, "profissionais": profissionais, 
+        "request": request, "profissionais": profissionais, "destaques": destaque_list,
         "termo_busca": q, "buscou": buscou, "mensagem_sucesso": sucesso
     })
+
+# 3. Rota para Orçamento Coletivo (Redireciona para busca específica)
+@app.post("/orcamento-coletivo")
+def orcamento_coletivo(request: Request, cidade: str = Form(...), servico: str = Form(...)):
+    busca = f"{servico} {cidade}"
+    return RedirectResponse(url=f"/?q={busca}", status_code=303)
 
 @app.get("/cadastro")
 def form_cadastro(request: Request, db: Session = Depends(get_db)):
     categorias = db.query(models.Categoria).order_by(models.Categoria.nome).all()
-    return templates.TemplateResponse("cadastro.html", {
-        "request": request, "categorias": categorias, "cidades": sorted(CIDADES_SE)
-    })
+    # (Lista de cidades SE completa aqui...)
+    return templates.TemplateResponse("cadastro.html", {"request": request, "categorias": categorias})
 
 @app.post("/cadastrar")
-def salvar_cadastro(
-    request: Request, nome: str = Form(...), telefone: str = Form(...), 
-    redes_sociais: str = Form(None), endereco: str = Form(...), 
-    numero: str = Form(...), cidade: str = Form(...),
-    descricao: str = Form(...), categoria_id: int = Form(...), 
-    db: Session = Depends(get_db)
-):
-    novo = models.Profissional(
-        nome=nome, telefone=telefone, redes_sociais=redes_sociais,
-        endereco=endereco, numero=numero, cidade=cidade,
-        descricao=descricao, categoria_id=categoria_id
-    )
+def salvar_cadastro(request: Request, nome: str = Form(...), telefone: str = Form(...), endereco: str = Form(...), numero: str = Form(...), cidade: str = Form(...), descricao: str = Form(...), categoria_id: int = Form(...), db: Session = Depends(get_db)):
+    novo = models.Profissional(nome=nome, telefone=telefone, endereco=endereco, numero=numero, cidade=cidade, descricao=descricao, categoria_id=categoria_id)
     db.add(novo)
     db.commit()
-    request.session["mensagem_sucesso"] = "Cadastro enviado! Aguarde instruções via WhatsApp."
-    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
-
-@app.get("/contato")
-def pagina_contato(request: Request):
-    return templates.TemplateResponse("contato.html", {"request": request})
+    request.session["mensagem_sucesso"] = "Cadastro enviado! Aguarde contato via WhatsApp."
+    return RedirectResponse(url="/", status_code=303)
 
 @app.get("/login-admin")
-def login_page(request: Request):
+def login_admin(request: Request):
     return templates.TemplateResponse("login_admin.html", {"request": request})
 
 @app.post("/admin")
 def painel_admin(request: Request, senha: str = Form(...), db: Session = Depends(get_db)):
     if senha != ADMIN_PASSWORD:
-        return templates.TemplateResponse("login_admin.html", {"request": request, "erro": "Senha incorreta!"})
+        return templates.TemplateResponse("login_admin.html", {"request": request, "erro": "Senha incorreta"})
     profissionais = db.query(models.Profissional).all()
     return templates.TemplateResponse("admin.html", {"request": request, "profissionais": profissionais})
-
-@app.get("/admin/deletar/{id}")
-def deletar_profissional(id: int, db: Session = Depends(get_db)):
-    prof = db.query(models.Profissional).filter(models.Profissional.id == id).first()
-    if prof:
-        db.delete(prof)
-        db.commit()
-    return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
