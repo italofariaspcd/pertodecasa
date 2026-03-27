@@ -1,53 +1,149 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perto de Casa SE</title>
+    <title>🏠 Perto de Casa SE</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        :root { --terracota: #953d15; --caramelo: #c57d4c; --oliva: #a7bc72; --fundo: #e8dcc4; --escuro: #2d1a12; }
-        body { background-color: var(--fundo); display: flex; flex-direction: column; min-height: 100vh; font-family: sans-serif; }
-        .nav-premium { background: var(--terracota); border-bottom: 4px solid var(--caramelo); padding: 12px 0; }
-        .card-prof { border-radius: 20px; border-left: 8px solid var(--oliva); background: white; margin-bottom: 20px; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
-        .search-container { background: white; border-radius: 50px; padding: 6px; border: 2px solid var(--caramelo); width: 95%; max-width: 600px; }
-        .btn-float { position: fixed; bottom: 25px; right: 20px; background: var(--terracota); color: white; border-radius: 50px; padding: 14px 24px; font-weight: bold; border: none; z-index: 999; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .rodape { background: var(--escuro); color: var(--fundo); padding: 35px 0; text-align: center; margin-top: auto; }
-        .destaques-scroll { display: flex; overflow-x: auto; gap: 15px; padding: 10px; scrollbar-width: none; }
-        .card-destaque { min-width: 250px; background: white; border-radius: 20px; border-bottom: 5px solid var(--oliva); padding: 20px; }
-        @media (max-width: 768px) { .h1-title { font-size: 1.5rem; } .nav-premium fs-4 { font-size: 1.2rem; } }
+        :root {
+            --fundo: #e8dcc4;
+            --terracota: #953d15;
+            --escuro: #2d1a12;
+            --oliva: #a7bc72;
+            --caramelo: #c57d4c;
+        }
+
+        body {
+            background-color: var(--fundo);
+            color: var(--escuro);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .nav-custom {
+            background: var(--terracota);
+            border-bottom: 4px solid var(--caramelo);
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 50px;
+            padding: 10px;
+            border: 2px solid var(--caramelo);
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .card-prof {
+            border-radius: 20px;
+            border-left: 8px solid var(--oliva);
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .destaque-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding-bottom: 10px;
+            scrollbar-width: none;
+        }
+
+        .rodape {
+            background: var(--escuro);
+            color: var(--fundo);
+            padding: 30px 0;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .btn-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--terracota);
+            color: white;
+            border-radius: 50px;
+            padding: 15px 25px;
+            z-index: 100;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
     </style>
 </head>
+
 <body>
-    <nav class="nav-premium sticky-top shadow"><div class="container d-flex justify-content-between align-items-center">
-        <a href="/" class="text-white text-decoration-none fw-bold fs-4">📍 Perto de Casa</a>
-        <div class="d-flex gap-2"><a href="/contato" class="btn btn-sm text-white fw-bold">Ajuda</a><a href="/cadastro" class="btn btn-light rounded-pill px-3 fw-bold btn-sm">Anunciar</a></div>
-    </div></nav>
+    <nav class="nav-custom shadow py-3 sticky-top">
+        <div class="container d-flex justify-content-between">
+            <a href="/" class="text-white text-decoration-none fw-bold fs-4">📍 Perto de Casa SE</a>
+            <div><a href="/contato" class="btn btn-sm text-white">Suporte</a><a href="/cadastrar"
+                    class="btn btn-light rounded-pill btn-sm fw-bold">Anunciar</a></div>
+        </div>
+    </nav>
 
     <div class="container py-4 flex-grow-1">
-        {% if msg %}<div class="alert alert-success text-center border-0 rounded-4 mb-4 shadow-sm" style="background: var(--oliva); color: white;">{{ msg }}</div>{% endif %}
-        
-        {% if destaques %}<div class="mb-4"><h6 class="fw-bold text-uppercase px-2" style="color: var(--terracota);">⭐ Destaques da Semana</h6><div class="destaques-scroll">
-            {% for d in destaques %}<div class="card-destaque shadow-sm"><div class="badge bg-light text-dark mb-2">🏷️ {{ d.categoria.nome }}</div><div class="fw-bold fs-5 mb-1" style="color: var(--terracota);">{{ d.nome }}</div><div class="small text-muted mb-3">📍 {{ d.cidade }}</div><a href="https://wa.me/55{{ d.telefone }}" class="btn btn-sm w-100 fw-bold py-2" style="background: var(--oliva); color: white; border-radius: 10px;">WhatsApp</a></div>{% endfor %}
-        </div></div>{% endif %}
+        {% if msg %}<div class="alert alert-success text-center border-0 rounded-4">{{ msg }}</div>{% endif %}
 
-        <div class="text-center mb-5 mt-3">
-            <h1 class="h1-title fw-bold mb-4" style="color: var(--terracota);">Busque em Sergipe</h1>
-            <div class="search-container mx-auto shadow-sm">
-                <form action="/" method="GET" class="d-flex align-items-center"><input type="text" id="q" name="q" class="form-control border-0 bg-transparent shadow-none" placeholder="Cidade, Serviço ou Nome..." value="{{ termo_busca or '' }}" required><button type="button" onclick="ativarGPS()" class="btn border-0">📍</button><button type="submit" class="btn rounded-pill px-4 fw-bold text-white shadow-sm" style="background: var(--caramelo);">BUSCAR</button></form>
+        {% if destaques %}
+        <h6 class="fw-bold text-uppercase px-2" style="color: var(--terracota);">⭐ Destaques da Semana</h6>
+        <div class="destaque-scroll px-2">
+            {% for d in destaques %}<div class="bg-white p-3 shadow-sm rounded-4" style="min-width: 240px;">
+                <div class="fw-bold fs-5" style="color: var(--terracota);">{{ d.nome }}</div>
+                <div class="small text-muted mb-2">📍 {{ d.cidade }}</div>
+                <a href="https://wa.me/55{{ d.telefone }}" class="btn btn-sm w-100 text-white"
+                    style="background: var(--oliva);">WhatsApp</a>
+            </div>{% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="text-center my-5">
+            <h2 class="fw-bold h1" style="color: var(--terracota);">Busque em Sergipe</h2>
+            <div class="search-box mt-4 shadow-sm">
+                <form action="/" method="GET" class="d-flex"><input type="text" name="q"
+                        class="form-control border-0 bg-transparent shadow-none"
+                        placeholder="Serviço, Cidade ou Nome..." value="{{ termo or '' }}"><button type="submit"
+                        class="btn px-4 text-white rounded-pill fw-bold"
+                        style="background: var(--caramelo);">BUSCAR</button></form>
             </div>
         </div>
 
-        <div class="mx-auto" style="max-width: 750px;">
-            {% for p in profissionais %}<div class="card card-prof p-4 shadow-sm"><div class="d-flex justify-content-between align-items-start"><div><h4 class="fw-bold mb-0" style="color: var(--terracota);">{{ p.nome }}</h4><p class="text-secondary small mb-1">📍 {{ p.cidade }} • {{ p.categoria.nome }}</p></div></div><p class="mt-2 text-muted">{{ p.descricao }}</p><div class="small text-muted mb-3">🏠 {{ p.endereco }}, {{ p.numero }}</div><a href="https://wa.me/55{{ p.telefone }}" class="btn w-100 fw-bold py-3 text-white shadow-sm" style="background: var(--oliva); border-radius: 50px;">WHATSAPP</a></div>{% endfor %}
+        <div class="mx-auto" style="max-width: 800px;">
+            {% for p in profissionais %}<div class="card card-prof p-4 mb-4 bg-white">
+                <h4 class="fw-bold" style="color: var(--terracota);">{{ p.nome }}</h4>
+                <div class="badge bg-light text-dark border mb-2">{{ p.categoria.nome }}</div>
+                <p class="mb-1 text-muted">📍 {{ p.cidade }} • {{ p.endereco }}, {{ p.numero }}</p>
+                <p class="small text-secondary">{{ p.descricao }}</p>
+                <a href="https://wa.me/55{{ p.telefone }}" class="btn w-100 py-3 text-white shadow-sm fw-bold mt-2"
+                    style="background: var(--oliva); border-radius: 50px;">CHAMAR AGORA</a>
+            </div>{% endfor %}
         </div>
     </div>
 
-    <button class="btn-float" data-bs-toggle="modal" data-bs-target="#m">📝 Orçamento</button>
-    <div class="modal fade" id="m" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content p-3 shadow-lg" style="border-radius: 25px; background: var(--fundo); border: none;"><form action="/orcamento-coletivo" method="POST"><div class="modal-body"><h5 class="fw-bold mb-3" style="color: var(--terracota);">Pedido Coletivo</h5><input type="text" name="cidade" class="form-control mb-3 p-3 border-0 shadow-sm" placeholder="Sua Cidade em SE" style="border-radius: 12px;" required><input type="text" name="servico" class="form-control p-3 border-0 shadow-sm" placeholder="Qual serviço você busca?" style="border-radius: 12px;" required></div><div class="modal-footer border-0"><button type="submit" class="btn w-100 py-3 fw-bold text-white shadow" style="background: var(--terracota); border-radius: 12px;">ENVIAR</button></div></form></div></div></div>
+    <footer class="rodape">
+        <p class="mb-1 fw-bold">Caju Valley Tecnologia 🌵</p>
+        <p class="mb-0 small">@pertodecasase • Sergipe 2026</p>
+    </footer>
+    <button class="btn-float fw-bold" data-bs-toggle="modal" data-bs-target="#m">📝 Orçamento</button>
 
-    <footer class="rodape"><p class="mb-1 fw-bold">Caju Valley Tecnologia 🌵</p><p class="mb-0 small">@pertodecasase • Sergipe 2026</p></footer>
+    <div class="modal fade" id="m" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-4 rounded-5" style="background: var(--fundo);">
+                <form action="/" method="GET">
+                    <h5>Pedido Rápido</h5>
+                    <p class="small">O que você está procurando?</p><input type="text" name="q"
+                        class="form-control mb-3" placeholder="Ex: Eletricista em Aracaju"><button
+                        class="btn w-100 text-white" style="background: var(--terracota);">Buscar Profissionais</button>
+                </form>
+            </div>
+        </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>function ativarGPS(){ if(navigator.geolocation){ navigator.geolocation.getCurrentPosition(p=>{ fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${p.coords.latitude}&lon=${p.coords.longitude}`).then(r=>r.json()).then(d=>{ document.getElementById('q').value = d.address.city || d.address.town || ""; }); }); }}</script>
 </body>
+
 </html>
