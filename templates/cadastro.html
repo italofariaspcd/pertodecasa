@@ -5,27 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anunciar - Perto de Casa SE</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        :root { --terracota: #953d15; --fundo: #e8dcc4; }
-        body { background-color: var(--fundo); padding: 30px 0; }
-        .card-cadastro { border-radius: 25px; border: none; box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
-        .form-control, .form-select { border-radius: 10px; padding: 12px; border: 1px solid #ddd; }
-    </style>
+    <style> :root { --terracota: #953d15; --fundo: #e8dcc4; } body { background-color: var(--fundo); padding: 30px 0; } .form-control, .form-select { border-radius: 10px; padding: 12px; } </style>
 </head>
 <body>
     <div class="container text-center mb-4"><a href="/" class="btn btn-outline-dark rounded-pill px-4 fw-bold">← VOLTAR AO INÍCIO</a></div>
-    <div class="container"><div class="card card-cadastro mx-auto" style="max-width: 800px;"><div class="card-body p-4 p-md-5 bg-white rounded-4">
-        <h2 class="fw-bold mb-4 text-center" style="color: var(--terracota);">Criar Meu Anúncio</h2>
+    <div class="container"><div class="card border-0 shadow mx-auto" style="max-width: 800px; border-radius: 25px;"><div class="card-body p-4 p-md-5">
+        <h2 class="fw-bold mb-4 text-center" style="color: var(--terracota);">Cadastrar Anúncio</h2>
         <form action="/cadastrar-anuncio" method="POST">
-            <div class="mb-3"><label class="fw-bold small text-muted">NOME PROFISSIONAL / NEGÓCIO</label><input type="text" name="nome" class="form-control" required></div>
-            <div class="row"><div class="col-md-6 mb-3"><label class="fw-bold small text-muted">WHATSAPP (DDD)</label><input type="tel" name="telefone" class="form-control" placeholder="799..." required></div><div class="col-md-6 mb-3"><label class="fw-bold small text-muted">INSTAGRAM</label><input type="text" name="redes_sociais" class="form-control" placeholder="@perfil"></div></div>
+            <div class="mb-3"><label class="fw-bold small text-muted">NOME DO PROFISSIONAL</label><input type="text" name="nome" class="form-control" required></div>
+            <div class="row"><div class="col-md-6 mb-3"><label class="fw-bold small text-muted">WHATSAPP</label><input type="tel" name="telefone" class="form-control" placeholder="799..." required></div><div class="col-md-6 mb-3"><label class="fw-bold small text-muted">INSTAGRAM</label><input type="text" name="redes_sociais" class="form-control" placeholder="@seu"></div></div>
             <div class="row"><div class="col-8 mb-3"><label class="fw-bold small text-muted">RUA/LOGRADOURO</label><input type="text" name="endereco" class="form-control" required></div><div class="col-4 mb-3"><label class="fw-bold small text-muted">Nº</label><input type="text" name="numero" class="form-control" required></div></div>
-            <div class="mb-3"><label class="fw-bold small text-muted">CIDADE EM SERGIPE</label><select name="cidade" class="form-select" required><option value="">Selecione...</option>{% for c in cidades %}<option value="{{ c }}">{{ c }}</option>{% endfor %}</select></div>
-            <div class="mb-3"><label class="fw-bold small text-muted">CATEGORIA</label><select name="categoria_id" class="form-select" required><option value="">O que você faz?</option>{% for cat in categorias %}<option value="{{ cat.id }}">{{ cat.nome }}</option>{% endfor %}</select></div>
-            <div class="mb-4"><label class="fw-bold small text-muted">DESCRIÇÃO</label><textarea name="descricao" class="form-control" rows="3" placeholder="Resuma seu serviço..." required></textarea></div>
-            <div class="alert mb-4 border-0 p-3" style="background: #fff8f0; color: #953d15; border-radius: 15px; font-size: 0.85rem;">
-                <b>⚠️ IMPORTANTE:</b> Taxa de <b>R$ 10,00 mensal</b>. A falta de pagamento suspende o anúncio. Suporte e cobrança realizados via WhatsApp.
-                <div class="mt-2"><input type="checkbox" required> Li e aceito os termos.</div>
+            <div class="mb-3"><label class="fw-bold small text-muted">CIDADE</label><select name="cidade" class="form-select" required><option value="">Selecione...</option>{% for c in cidades %}<option value="{{ c }}">{{ c }}</option>{% endfor %}</select></div>
+            <div class="mb-3"><label class="fw-bold small text-muted">CATEGORIA</label><select name="categoria_id" class="form-select" required>{% for cat in categorias %}<option value="{{ cat.id }}">{{ cat.nome }}</option>{% endfor %}</select></div>
+            <div class="mb-4"><label class="fw-bold small text-muted">DESCRIÇÃO</label><textarea name="descricao" class="form-control" rows="3" required></textarea></div>
+            <div class="alert mb-4 border-0 p-3 shadow-sm" style="background: #fff8f0; color: #953d15; border-radius: 15px; font-size: 0.85rem;">
+                <b>⚠️ TAXA DE MANUTENÇÃO:</b> Valor de <b>R$ 10,00 mensal</b>. A falta de pagamento suspende o anúncio. Suporte via WhatsApp.
+                <div class="mt-2"><input type="checkbox" required> Estou ciente e aceito os termos.</div>
             </div>
             <button type="submit" class="btn w-100 py-3 fw-bold text-white shadow" style="background: #a7bc72; border-radius: 12px; border: none;">CONCLUIR CADASTRO</button>
         </form>

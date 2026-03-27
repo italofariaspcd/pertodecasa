@@ -2,25 +2,34 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Painel de Gestão</title>
+    <title>Gestão Master</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body style="background-color: #e8dcc4; padding: 20px;">
-    <div class="container bg-white p-4 rounded-4 shadow-sm">
+    <div class="container bg-white p-4 rounded-4 shadow">
         <div class="d-flex justify-content-between mb-4 align-items-center">
             <h4 class="fw-bold mb-0">Gestão de Anúncios</h4>
-            <a href="/" class="btn btn-dark btn-sm rounded-pill">Sair do Painel</a>
+            <div>
+                <a href="/admin/exportar" class="btn btn-success btn-sm rounded-pill px-3">Baixar Banco (CSV)</a>
+                <a href="/" class="btn btn-dark btn-sm rounded-pill px-3">Sair</a>
+            </div>
         </div>
         <div class="table-responsive">
             <table class="table align-middle">
-                <thead><tr><th>Nome</th><th>Cidade</th><th>Contato</th><th>Ação</th></tr></thead>
+                <thead><tr><th>Nome</th><th>Cidade</th><th>Contato</th><th>Destaque?</th><th>Ação</th></tr></thead>
                 <tbody>
                     {% for p in profissionais %}
                     <tr>
-                        <td><b>{{ p.nome }}</b><br><small class="text-muted">{{ p.categoria.nome }}</small></td>
-                        <td>{{ p.cidade }}</td>
-                        <td>{{ p.telefone }}</td>
-                        <td><a href="/admin/deletar/{{ p.id }}" class="btn btn-danger btn-sm rounded-pill" onclick="return confirm('Deseja deletar?')">Deletar</a></td>
+                        <form action="/admin/editar/{{ p.id }}" method="POST">
+                            <td><input type="text" name="nome" value="{{ p.nome }}" class="form-control form-control-sm"></td>
+                            <td><input type="text" name="cidade" value="{{ p.cidade }}" class="form-control form-control-sm"></td>
+                            <td><input type="text" name="telefone" value="{{ p.telefone }}" class="form-control form-control-sm"></td>
+                            <td><select name="is_destaque" class="form-select form-select-sm"><option value="True" {% if p.is_destaque %}selected{% endif %}>Sim</option><option value="False" {% if not p.is_destaque %}selected{% endif %}>Não</option></select></td>
+                            <td>
+                                <button type="submit" class="btn btn-primary btn-sm rounded-pill">Salvar</button>
+                                <a href="/admin/deletar/{{ p.id }}" class="btn btn-danger btn-sm rounded-pill">🗑️</a>
+                            </td>
+                        </form>
                     </tr>
                     {% endfor %}
                 </tbody>
