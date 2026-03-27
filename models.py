@@ -13,13 +13,13 @@ class Profissional(Base):
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String, index=True)
     telefone = Column(String)
-    redes_sociais = Column(String, nullable=True)
+    redes_sociais = Column(String, nullable=True) # Instagram
     endereco = Column(String)
     numero = Column(String)
     cidade = Column(String)
     descricao = Column(String)
     categoria_id = Column(Integer, ForeignKey("categorias.id"))
     ativo = Column(Boolean, default=True)
-    is_destaque = Column(Boolean, default=False) 
+    is_destaque = Column(Boolean, default=False)
 
     categoria = relationship("Categoria", back_populates="profissionais")

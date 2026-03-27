@@ -8,15 +8,14 @@ import models, database
 from seed import LISTA_CIDADES_SE
 
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key="caju-valley-final-2026")
+app.add_middleware(SessionMiddleware, secret_key="caju-valley-master-2026")
 templates = Jinja2Templates(directory="templates")
 
 ADMIN_PASS = "Cica29xl!@"
 
-# Rota técnica para o Cron Job (Uptime Robot / Render)
 @app.get("/healthcheck")
 def healthcheck():
-    return {"status": "online", "message": "Perto de Casa SE acordado!"}
+    return {"status": "online", "source": "Render Cron"}
 
 @app.get("/")
 def home(request: Request, q: str = None, db: Session = Depends(database.get_db)):
@@ -31,15 +30,15 @@ def form_cadastro(request: Request, db: Session = Depends(database.get_db)):
     cats = db.query(models.Categoria).order_by(models.Categoria.nome).all()
     return templates.TemplateResponse("cadastro.html", {"request": request, "categorias": cats, "cidades": sorted(LISTA_CIDADES_SE)})
 
-@app.post("/cadastrar")
-def salvar(request: Request, nome: str = Form(...), telefone: str = Form(...), cidade: str = Form(...), endereco: str = Form(...), numero: str = Form(...), categoria_id: int = Form(...), descricao: str = Form(...), redes_sociais: str = Form(None), db: Session = Depends(database.get_db)):
+@app.post("/cadastrar-anuncio")
+def salvar_anuncio(request: Request, nome: str = Form(...), telefone: str = Form(...), cidade: str = Form(...), endereco: str = Form(...), numero: str = Form(...), categoria_id: int = Form(...), descricao: str = Form(...), redes_sociais: str = Form(None), db: Session = Depends(database.get_db)):
     try:
         novo = models.Profissional(nome=nome, telefone=telefone, cidade=cidade, endereco=endereco, numero=numero, categoria_id=categoria_id, descricao=descricao, redes_sociais=redes_sociais)
         db.add(novo)
         db.commit()
-        request.session["msg"] = "Enviado com sucesso! Aguarde o contato no WhatsApp para ativação."
+        request.session["msg"] = "Enviado com sucesso! Aguarde ativação via WhatsApp."
         return RedirectResponse(url="/", status_code=303)
-    except Exception:
+    except Exception as e:
         db.rollback()
         return RedirectResponse(url="/cadastro", status_code=303)
 
@@ -47,7 +46,7 @@ def salvar(request: Request, nome: str = Form(...), telefone: str = Form(...), c
 def login_admin(request: Request):
     return templates.TemplateResponse("login_admin.html", {"request": request})
 
-@app.post("/admin")
+@app.post("/painel-admin")
 def painel_admin(request: Request, senha: str = Form(...), db: Session = Depends(database.get_db)):
     if senha != ADMIN_PASS:
         return templates.TemplateResponse("login_admin.html", {"request": request, "erro": "Senha incorreta!"})
@@ -57,7 +56,9 @@ def painel_admin(request: Request, senha: str = Form(...), db: Session = Depends
 @app.get("/admin/deletar/{id}")
 def deletar(id: int, db: Session = Depends(database.get_db)):
     prof = db.query(models.Profissional).get(id)
-    if prof: db.delete(prof); db.commit()
+    if prof:
+        db.delete(prof)
+        db.commit()
     return RedirectResponse(url="/login-admin", status_code=303)
 
 @app.get("/contato")

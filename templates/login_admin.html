@@ -2,18 +2,18 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Acesso Admin</title>
+    <title>Painel Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body style="background-color: #e8dcc4; height: 100vh; display: flex; align-items: center; justify-content: center;">
-    <div class="card p-4 shadow border-0" style="border-radius: 20px; width: 350px;">
-        <h5 class="fw-bold text-center mb-3">🔐 ADMINISTRAÇÃO</h5>
+<body style="background-color: #e8dcc4; display: flex; align-items: center; justify-content: center; height: 100vh; flex-direction: column;">
+    <a href="/" class="btn btn-outline-dark mb-3">← Início</a>
+    <div class="card p-4 shadow border-0" style="border-radius: 20px; width: 320px;">
+        <h5 class="fw-bold text-center mb-3">🔐 ADMIN</h5>
         {% if erro %}<div class="alert alert-danger p-2 small text-center">{{ erro }}</div>{% endif %}
-        <form action="/admin" method="POST">
-            <input type="password" name="senha" class="form-control mb-3" placeholder="Senha mestre" required>
-            <button type="submit" class="btn w-100 fw-bold text-white" style="background: #953d15;">ENTRAR</button>
+        <form action="/painel-admin" method="POST">
+            <input type="password" name="senha" class="form-control mb-3" placeholder="Senha Mestre" required>
+            <button type="submit" class="btn w-100 text-white fw-bold" style="background: #953d15;">ENTRAR</button>
         </form>
-        <div class="text-center mt-3"><a href="/" class="text-muted small">Voltar</a></div>
     </div>
 </body>
 </html>
