@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏠 Perto de Casa SE</title>
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
@@ -20,92 +20,54 @@
         body {
             background-color: var(--fundo);
             color: var(--escuro);
-            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
-        /* Navbar Responsiva */
         .nav-custom {
             background: var(--terracota);
             border-bottom: 4px solid var(--caramelo);
-            padding: 12px 0;
         }
 
-        .logo-text {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white;
-            text-decoration: none;
-        }
-
-        @media (max-width: 576px) {
-            .logo-text {
-                font-size: 1.2rem;
-            }
-        }
-
-        /* Busca Adaptável */
-        .search-container {
+        .search-box {
             background: white;
             border-radius: 50px;
-            padding: 6px;
+            padding: 6px 15px;
             border: 2px solid var(--caramelo);
             width: 100%;
-            max-width: 650px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
+            max-width: 600px;
+            margin: auto;
         }
 
-        .search-input {
-            border: none;
-            padding: 10px 20px;
-            flex-grow: 1;
-            outline: none;
-            border-radius: 50px 0 0 50px;
-            font-size: 1rem;
-        }
-
-        .btn-busca {
-            background: var(--caramelo);
-            color: white;
-            border-radius: 50px;
-            padding: 10px 25px;
-            border: none;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        @media (max-width: 576px) {
-            .search-container {
-                border-radius: 15px;
-                flex-direction: column;
-                padding: 10px;
-            }
-
-            .search-input {
-                width: 100%;
-                text-align: center;
-                margin-bottom: 8px;
-            }
-
-            .btn-busca {
-                width: 100%;
-                border-radius: 10px;
-            }
-        }
-
-        /* Cards de Profissionais */
         .card-prof {
             border-radius: 20px;
             border-left: 8px solid var(--oliva);
             border: none;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+            transition: 0.3s;
             margin-bottom: 20px;
         }
 
-        .card-prof:hover {
-            transform: translateY(-3px);
+        .destaque-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding-bottom: 15px;
+            scrollbar-width: none;
+        }
+
+        .destaque-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .rodape {
+            background: var(--escuro);
+            color: var(--fundo);
+            padding: 35px 0;
+            text-align: center;
+            margin-top: auto;
         }
 
         .btn-whatsapp {
@@ -117,86 +79,86 @@
             text-decoration: none;
             display: block;
             text-align: center;
+            transition: 0.3s;
         }
 
-        /* Botão Flutuante */
-        .btn-float {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--terracota);
+        .btn-whatsapp:hover {
+            transform: scale(1.02);
+            background: #8da35d;
             color: white;
-            border-radius: 50px;
-            padding: 15px 25px;
-            z-index: 1000;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            font-weight: bold;
-            border: none;
         }
 
-        @media (max-width: 576px) {
-            .btn-float {
-                padding: 12px 20px;
-                font-size: 0.9rem;
-                bottom: 15px;
-                right: 15px;
+        @media (max-width: 768px) {
+            .h1-mobile {
+                font-size: 1.8rem;
+            }
+
+            .nav-brand-mobile {
+                font-size: 1.2rem;
             }
         }
     </style>
 </head>
 
 <body>
-    <nav class="nav-custom sticky-top shadow-sm">
+    <nav class="nav-custom shadow py-3 sticky-top">
         <div class="container d-flex justify-content-between align-items-center">
-            <a href="/" class="logo-text">🏠 Perto de Casa SE</a>
-            <div class="d-flex gap-2">
-                <a href="/contato" class="btn btn-sm text-white border-0">Ajuda</a>
-                <a href="/cadastrar" class="btn btn-light rounded-pill btn-sm fw-bold px-3">Anunciar</a>
-            </div>
+            <a href="/" class="text-white text-decoration-none fw-bold fs-4 nav-brand-mobile">🏠 Perto de Casa SE</a>
+            <div><a href="/contato" class="btn btn-sm text-white me-2">Suporte</a><a href="/cadastrar"
+                    class="btn btn-light rounded-pill btn-sm fw-bold">Anunciar</a></div>
         </div>
     </nav>
 
-    <main class="container py-4">
-        <div class="text-center py-5">
-            <h1 class="display-5 fw-bold mb-4" style="color: var(--terracota);">Serviços em Sergipe</h1>
-            <div class="px-2">
-                <form action="/" method="GET" class="search-container shadow-sm">
-                    <input type="text" name="q" class="search-input"
-                        placeholder="O que você procura? (Ex: Pedreiro, Socorro...)" value="{{ termo or '' }}">
-                    <button type="submit" class="btn-busca">BUSCAR</button>
-                </form>
+    <div class="container py-4 flex-grow-1">
+        {% if msg %}<div class="alert alert-success text-center border-0 rounded-4 shadow-sm mb-4 fw-bold"
+            style="background: var(--oliva); color: white;">✅ {{ msg }}</div>{% endif %}
+
+        {% if destaques %}
+        <h6 class="fw-bold text-uppercase px-2" style="color: var(--terracota); letter-spacing: 1px;">⭐ DESTAQUES DA
+            SEMANA</h6>
+        <div class="destaque-scroll px-2">
+            {% for d in destaques %}<div class="bg-white p-3 shadow-sm rounded-4 text-center"
+                style="min-width: 240px; border-bottom: 4px solid var(--oliva);">
+                <div class="fw-bold text-truncate" style="color: var(--terracota);">{{ d.nome }}</div>
+                <div class="small text-muted mb-2">📍 {{ d.cidade }}</div>
+                <a href="https://wa.me/55{{ d.telefone }}" class="btn btn-sm w-100 text-white rounded-pill"
+                    style="background: var(--oliva);">WhatsApp</a>
+            </div>{% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="text-center my-5 px-3">
+            <h1 class="fw-bold h1-mobile" style="color: var(--terracota);">O que Sergipe precisa hoje?</h1>
+            <div class="search-box mt-4 shadow-sm">
+                <form action="/" method="GET" class="d-flex align-items-center"><input type="text" name="q"
+                        class="form-control border-0 bg-transparent shadow-none"
+                        placeholder="Serviço, Cidade ou Nome..." value="{{ termo or '' }}"><button type="submit"
+                        class="btn px-4 text-white rounded-pill fw-bold"
+                        style="background: var(--caramelo);">BUSCAR</button></form>
             </div>
         </div>
 
-        <div class="row justify-content-center">
-            <div class="col-12 col-lg-8">
-                {% for p in profissionais %}
-                <div class="card card-prof p-3 p-md-4 bg-white">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h3 class="h4 fw-bold mb-0" style="color: var(--terracota);">{{ p.nome }}</h3>
-                        <span class="badge bg-light text-dark border">📍 {{ p.cidade }}</span>
-                    </div>
-                    <div class="mb-3"><span class="small fw-bold text-muted text-uppercase">{{ p.categoria.nome
-                            }}</span></div>
-                    <p class="text-secondary small mb-3">{{ p.descricao }}</p>
-                    <div class="p-2 bg-light rounded-3 mb-3 small">
-                        🏠 {{ p.endereco }}, {{ p.numero }}
-                    </div>
-                    <a href="https://wa.me/55{{ p.telefone }}" target="_blank" class="btn-whatsapp shadow-sm">CHAMAR NO
-                        WHATSAPP</a>
+        <div class="mx-auto" style="max-width: 800px;">
+            {% for p in profissionais %}<div class="card card-prof p-4 bg-white">
+                <div class="d-flex justify-content-between align-items-start">
+                    <h4 class="fw-bold mb-1" style="color: var(--terracota);">{{ p.nome }}</h4>
+                    <span class="badge bg-light text-dark border">📍 {{ p.cidade }}</span>
                 </div>
-                {% endfor %}
-            </div>
+                <div class="text-muted small fw-bold mb-2 text-uppercase">{{ p.categoria.nome }}</div>
+                <p class="text-secondary mb-3">{{ p.descricao }}</p>
+                <div class="p-2 rounded-3 mb-3 small" style="background: #fdfaf3; border: 1px dashed #c57d4c;">
+                    🏠 <b>Endereço:</b> {{ p.endereco }}, {{ p.numero }}
+                </div>
+                <a href="https://wa.me/55{{ p.telefone }}" target="_blank" class="btn-whatsapp shadow-sm">CHAMAR NO
+                    WHATSAPP</a>
+            </div>{% endfor %}
         </div>
-    </main>
+    </div>
 
-    <button class="btn-float" data-bs-toggle="modal" data-bs-target="#m">📝 ORÇAMENTO</button>
-
-    <footer class="text-center py-5" style="background: var(--escuro); color: var(--fundo);">
+    <footer class="rodape">
         <p class="mb-1 fw-bold">Caju Valley Tecnologia 🌵</p>
-        <p class="small opacity-75">@pertodecasase • 2026</p>
+        <p class="mb-0 small">@pertodecasase • Sergipe 2026</p>
     </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

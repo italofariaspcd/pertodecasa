@@ -8,8 +8,9 @@ import models, database, io, csv
 from seed import LISTA_CIDADES_SE
 
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key="caju_valley_master_2026")
+app.add_middleware(SessionMiddleware, secret_key="caju_valley_master_2026_final")
 templates = Jinja2Templates(directory="templates")
+models.Base.metadata.create_all(bind=database.engine)
 
 ADMIN_PASS = "Cica29xl!@"
 
@@ -28,7 +29,13 @@ def home(request: Request, q: str = None, db: Session = Depends(database.get_db)
             or_(models.Profissional.nome.ilike(q_l), models.Profissional.descricao.ilike(q_l), 
                 models.Profissional.cidade.ilike(q_l), models.Categoria.nome.ilike(q_l))
         ).all()
-    return templates.TemplateResponse("index.html", {"request": request, "profissionais": profissionais, "destaques": destaques, "termo": q, "msg": request.session.pop("msg", None)})
+    return templates.TemplateResponse("index.html", {
+        "request": request, 
+        "profissionais": profissionais, 
+        "destaques": destaques, 
+        "termo": q, 
+        "msg": request.session.pop("msg", None)
+    })
 
 @app.get("/cadastrar")
 def form_cad(request: Request, db: Session = Depends(database.get_db)):
@@ -41,7 +48,7 @@ def salvar_anuncio(request: Request, nome: str = Form(...), telefone: str = Form
         novo = models.Profissional(nome=nome, telefone=telefone, cidade=cidade, endereco=endereco, numero=numero, categoria_id=categoria_id, descricao=descricao, redes_sociais=redes_sociais)
         db.add(novo)
         db.commit()
-        request.session["msg"] = "Enviado! Ativação via WhatsApp."
+        request.session["msg"] = "Cadastro realizado com sucesso! Aguarde ativação."
         return RedirectResponse(url="/", status_code=303)
     except:
         db.rollback()
@@ -54,7 +61,7 @@ def login_page(request: Request):
 @app.post("/admin-dashboard")
 def admin_dash(request: Request, senha: str = Form(...), db: Session = Depends(database.get_db)):
     if senha != ADMIN_PASS: return templates.TemplateResponse("login_admin.html", {"request": request, "erro": True})
-    profs = db.query(models.Profissional).all()
+    profs = db.query(models.Profissional).order_by(models.Profissional.id.desc()).all()
     return templates.TemplateResponse("admin.html", {"request": request, "profissionais": profs})
 
 @app.post("/admin/editar/{id}")
@@ -70,9 +77,9 @@ def exportar(db: Session = Depends(database.get_db)):
     profs = db.query(models.Profissional).all()
     out = io.StringIO()
     cw = csv.writer(out)
-    cw.writerow(["Nome", "Tel", "Cidade", "Rua", "N", "Destaque"])
+    cw.writerow(["Nome", "Tel", "Cidade", "Endereco", "Numero", "Destaque"])
     for p in profs: cw.writerow([p.nome, p.telefone, p.cidade, p.endereco, p.numero, p.is_destaque])
-    return Response(content=out.getvalue(), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=base_se.csv"})
+    return Response(content=out.getvalue(), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=base_pertodecasa.csv"})
 
 @app.get("/admin/deletar/{id}")
 def deletar(id: int, db: Session = Depends(database.get_db)):
