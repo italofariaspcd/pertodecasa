@@ -89,7 +89,7 @@ def popular_sistema():
                   "Operador de Roçadeira", "Operador de Telemarketing", "Organizador de Eventos", "Ortodontista", "Ourives", 
                   "Padeiro", "Pajé", "Paleontólogo", "Palhaço", "Panfleteiro", "Pecuarista", "Pedagogo", "Pedicure", "Pedreiro", 
                   "Peão de Boiadeiro", "Peixeiro", "Perfumista", "Perito Criminal", "Pescador", "Pescador de Curral", 
-                  "Personal Trainer", "Pintor Automotivo", "Pintor de Paredes", "Pizzaiolo", "Podólogo", "Porteiro", 
+                  "Personal Trainer", "Pintor Automotivo", "Pintor de Paredes", "Pizzaria", "Podólogo", "Porteiro", 
                   "Prensador", "Professor de Artes", "Professor de Dança", "Professor de Idiomas", "Professor de Música", 
                   "Programador", "Promotor de Vendas", "Psicólogo", "Psiquiatra", "Publicitário", "Queijeiro", "Radialista", 
                   "Radiologista", "Rasteleiro", "Rebarbador", "Recepcionista", "Redator", "Regente", "Relojoeiro", 
